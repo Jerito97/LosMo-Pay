@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+:root,[data-theme]{--desk:#efe7dd;--paper:#f7f2ec;--card:#fffdf9;--ink:#2b1015;--muted:#7d675c;--faint:#6f574f;--line:#e6dbd0;--line2:#d2c3b6;--wine:#4a0e1a;--accent:#8a2c3a;--onwine:#f7e9e4;--onwine2:#e8c9c4;--onwine3:#d9a9a4;--rose:#a83243;--rose2:#c94e5e;--knob:#c3b0a4;--brand-ink:#4a0e1a}
+:root[data-theme="oscuro"],[data-theme="oscuro"]{--desk:#120709;--paper:#170a0d;--card:#241216;--ink:#f4e9e4;--muted:#bd9d96;--faint:#c9aba5;--line:#3b1d22;--line2:#4e262d;--wine:#5e1526;--accent:#eaa3a6;--rose:#c94e5e;--rose2:#d9707c;--knob:#7d5c58;--brand-ink:#f4e9e4}
+body{margin:0;background:#efe7dd;color:#2b1015;font-family:"Archivo",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}a:hover{color:var(--rose2)}
+button,input{font-family:"Archivo",system-ui,sans-serif}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--rose2);outline-offset:2px}
+@keyframes sIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{transform:translateY(26px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes rIn{from{transform:translateX(100%)}to{transform:none}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" style="min-height:100vh;padding:34px 24px 56px;display:flex;flex-direction:column;align-items:center;gap:20px;background:var(--desk)">
+
+  <div style="width:100%;max-width:430px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:baseline;gap:9px">
+      <span style="display:flex;align-items:center;gap:9px"><img src="logo-losmo-pay.png" alt="" width="26" height="26" style="display:block;width:26px;height:26px;border-radius:7px"><span style="font-family:'Instrument Serif',Georgia,serif;font-size:24px;color:var(--brand-ink)">LosMo Pay</span></span>
+      <span style="font-size:10.5px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-weight:600">v2 · {{ screenTitle }}</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <sc-for list="{{ pills }}" as="p" hint-placeholder-count="8">
+        <button type="button" onClick="{{ p.go }}" style="border:1px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }};border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:600;letter-spacing:.03em;cursor:pointer">{{ p.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ isDark }}" width="{{ deviceW }}" height="{{ deviceH }}" hint-size="390px,844px">
+    <div style="height:100%;position:relative;overflow:hidden;background:var(--paper);color:var(--ink);display:flex;flex-direction:column;font-feature-settings:'tnum' 1">
+
+      <!-- LOGIN -->
+      <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ no }}" data-screen-label="Login">
+        <div style="flex:1;min-height:0;display:flex;flex-direction:column;animation:fIn .3s ease-out">
+          <div style="flex:none;background:var(--wine);color:var(--onwine);padding:62px 26px 26px">
+            <div style="font-family:'Instrument Serif',Georgia,serif;font-size:50px;line-height:.95;letter-spacing:-.01em">LosMo Pay</div>
+            <div style="margin-top:14px;height:1px;background:rgba(247,233,228,.32)"></div>
+          </div>
+
+          <div style="flex:1;min-height:0;overflow-y:auto;padding:22px 26px 26px">
+            <div style="font-size:13.5px;font-weight:600">Tu nombre</div>
+            <input value="{{ name }}" onChange="{{ setName }}" placeholder="Nacho" style="margin-top:9px;width:100%;box-sizing:border-box;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;color:var(--ink);font-size:16px;font-weight:500;outline:none">
+
+            <div style="margin-top:24px;display:flex;align-items:baseline;justify-content:space-between">
+              <span style="font-size:13.5px;font-weight:600">PIN</span>
+              <span style="font-size:11px;color:var(--faint);font-weight:600">{{ pinHint }}</span>
+            </div>
+            <input value="{{ pin }}" onChange="{{ setPin }}" inputmode="numeric" type="password" placeholder="••••••" style="margin-top:9px;width:100%;box-sizing:border-box;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;color:var(--ink);font-size:24px;font-weight:600;letter-spacing:.34em;outline:none">
+
+            <button type="button" onClick="{{ logIn }}" style="margin-top:26px;width:100%;background:var(--wine);border:0;border-radius:14px;padding:17px;color:var(--onwine);font-size:15px;font-weight:600;cursor:pointer">Entrar</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- APP -->
+      <sc-if value="{{ inApp }}" hint-placeholder-val="{{ yes }}">
+        <div style="flex:1;min-height:0;overflow-y:auto">
+
+          <!-- INICIO -->
+          <sc-if value="{{ isHome }}" hint-placeholder-val="{{ yes }}" data-screen-label="Inicio">
+            <div style="padding:56px 18px 30px;animation:sIn .26s ease-out">
+              <div style="padding:0 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+                <div style="min-width:0">
+                  <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--accent)">{{ todayLabel }}</div>
+                  <h1 style="margin:10px 0 0;font-family:'Instrument Serif',Georgia,serif;font-size:36px;line-height:1.02;font-weight:400">Hola, {{ meName }}.</h1>
+                </div>
+                <div style="flex:none;display:flex;gap:8px">
+                  <button type="button" onClick="{{ openNotifs }}" style="position:relative;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--brand-ink);cursor:pointer;display:flex;align-items:center;justify-content:center">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M18 15V10a6 6 0 1 0-12 0v5l-1.6 2.4h15.2z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg>
+                    <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ yes }}">
+                      <span style="position:absolute;top:-3px;right:-3px;min-width:19px;height:19px;box-sizing:border-box;padding:0 4px;border-radius:999px;background:var(--rose);border:2px solid var(--paper);color:#ffffff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ unread }}</span>
+                    </sc-if>
+                  </button>
+                  <button type="button" onClick="{{ openPerfil }}" style="width:40px;height:40px;border-radius:50%;border:0;background:var(--wine);color:var(--onwine);font-size:13px;font-weight:700;cursor:pointer">{{ meInitials }}</button>
+                </div>
+              </div>
+
+              <button type="button" onClick="{{ goGastos }}" style="margin-top:18px;width:100%;text-align:left;background:var(--wine);color:var(--onwine);border:0;border-radius:20px;padding:20px;cursor:pointer;box-shadow:0 8px 22px rgba(43,16,21,.14)">
+                <span style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+                  <span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--onwine3)">Tu saldo</span>
+                  <span style="font-size:11.5px;color:var(--onwine2)">{{ netSub }}</span>
+                </span>
+                <span style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:6px">
+                  <span style="font-family:'Instrument Serif',Georgia,serif;font-size:46px;line-height:.95">{{ netLabel }}</span>
+                  <span style="color:var(--onwine3);font-size:16px;padding-bottom:6px">→</span>
+                </span>
+              </button>
+
+              <sc-if value="{{ hasToday }}" hint-placeholder-val="{{ yes }}">
+                <button type="button" onClick="{{ goFechas }}" style="margin-top:10px;width:100%;text-align:left;background:var(--rose);border:0;border-radius:18px;padding:15px;display:flex;align-items:center;gap:13px;cursor:pointer">
+                  <span style="width:42px;height:42px;flex:none;border-radius:50%;background:var(--wine);color:var(--onwine);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">{{ todayInitials }}</span>
+                  <span style="flex:1;min-width:0">
+                    <span style="display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:#ffffff">Hoy cumple</span>
+                    <span style="display:block;margin-top:4px;font-family:'Instrument Serif',Georgia,serif;font-size:23px;color:#ffffff;line-height:1.05">{{ todayName }} · {{ todayAge }}</span>
+                  </span>
+                  <span style="flex:none;color:#ffffff;font-size:16px">→</span>
+                </button>
+              </sc-if>
+
+              <div style="margin-top:26px;padding:0 4px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+                <span style="font-family:'Instrument Serif',Georgia,serif;font-size:23px">Se viene</span>
+                <div style="display:flex;gap:3px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px">
+                  <sc-for list="{{ feedSegs }}" as="s" hint-placeholder-count="3">
+                    <button type="button" onClick="{{ s.go }}" style="border:0;background:{{ s.bg }};color:{{ s.fg }};border-radius:999px;padding:6px 11px;font-size:11.5px;font-weight:600;cursor:pointer">{{ s.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="margin-top:12px;display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ feed }}" as="f" hint-placeholder-count="5">
+                  <button type="button" onClick="{{ f.go }}" style="width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);padding:14px;display:flex;align-items:center;gap:14px;cursor:pointer;color:inherit">
+                    <span style="flex:none;width:44px;text-align:center">
+                      <span style="display:block;font-size:22px;font-weight:600;line-height:1;color:{{ f.numFg }}">{{ f.num }}</span>
+                      <span style="display:block;margin-top:2px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700">{{ f.unit }}</span>
+                    </span>
+                    <span style="flex:none;width:1px;align-self:stretch;background:var(--line)"></span>
+                    <span style="flex:1;min-width:0">
+                      <span style="display:flex;align-items:center;gap:7px">
+                        <span style="font-size:16px;font-weight:600;letter-spacing:-.01em">{{ f.title }}</span>
+                        <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:{{ f.tagFg }};border:1px solid {{ f.tagBd }};border-radius:4px;padding:2px 5px">{{ f.tag }}</span>
+                      </span>
+                      <span style="display:block;margin-top:3px;font-size:12px;color:var(--muted)">{{ f.sub }}</span>
+                    </span>
+                  </button>
+                </sc-for>
+                <sc-if value="{{ feedEmpty }}" hint-placeholder-val="{{ no }}">
+                  <div style="padding:24px 4px;font-size:13px;color:var(--muted)">Nada en este rango. Respirá.</div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- FECHAS -->
+          <sc-if value="{{ isFechas }}" hint-placeholder-val="{{ no }}" data-screen-label="Fechas">
+            <div style="padding:56px 18px 100px;animation:sIn .26s ease-out">
+              <h1 style="margin:0 4px;font-family:'Instrument Serif',Georgia,serif;font-size:40px;line-height:1;font-weight:400">Fechas</h1>
+              <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:3px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px">
+                <sc-for list="{{ fechasSegs }}" as="s" hint-placeholder-count="2">
+                  <button type="button" onClick="{{ s.go }}" style="border:0;border-radius:999px;background:{{ s.bg }};color:{{ s.fg }};padding:10px 0;font-size:12.5px;font-weight:600;cursor:pointer">{{ s.label }}</button>
+                </sc-for>
+              </div>
+
+              <sc-if value="{{ isLista }}" hint-placeholder-val="{{ yes }}">
+                <div>
+                  <div style="margin-top:14px;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:0 16px">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                    <input value="{{ search }}" onChange="{{ setSearch }}" placeholder="Buscar persona" style="flex:1;min-width:0;background:transparent;border:0;outline:none;padding:13px 0;color:var(--ink);font-size:14.5px;font-weight:500">
+                  </div>
+                  <sc-for list="{{ fechasGroups }}" as="g" hint-placeholder-count="3">
+                    <div>
+                      <div style="margin-top:20px;padding:0 4px;display:flex;align-items:center;gap:10px">
+                        <span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--accent)">{{ g.label }}</span>
+                        <span style="flex:1;height:1px;background:var(--line)"></span>
+                        <span style="font-size:11px;color:var(--faint);font-weight:600">{{ g.count }}</span>
+                      </div>
+                      <div style="margin-top:9px;display:flex;flex-direction:column;gap:9px">
+                        <sc-for list="{{ g.items }}" as="p" hint-placeholder-count="3">
+                          <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);padding:14px;display:flex;align-items:center;gap:13px">
+                            <span style="width:40px;height:40px;flex:none;border-radius:50%;background:{{ p.bg }};color:{{ p.fg }};display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:700">{{ p.initials }}</span>
+                            <span style="flex:1;min-width:0">
+                              <span style="display:flex;align-items:center;gap:7px">
+                                <span style="font-size:16px;font-weight:600">{{ p.name }}</span>
+                                <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:{{ p.tagFg }};border:1px solid {{ p.tagBd }};border-radius:4px;padding:2px 5px">{{ p.tag }}</span>
+                              </span>
+                              <span style="display:block;margin-top:3px;font-size:12px;color:var(--muted)">{{ p.sub }}</span>
+                            </span>
+                            <span style="flex:none;text-align:right">
+                              <span style="display:block;font-size:20px;font-weight:600;line-height:1;color:{{ p.daysFg }}">{{ p.daysLabel }}</span>
+                              <span style="display:block;margin-top:2px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700">{{ p.daysUnit }}</span>
+                            </span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ isCalendario }}" hint-placeholder-val="{{ no }}">
+                <div>
+                  <div style="margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);padding:16px">
+                    <div style="display:flex;align-items:center;justify-content:space-between">
+                      <button type="button" onClick="{{ calPrev }}" style="background:transparent;border:1px solid var(--line);border-radius:50%;width:34px;height:34px;color:var(--brand-ink);cursor:pointer;font-size:14px">←</button>
+                      <span style="font-family:'Instrument Serif',Georgia,serif;font-size:22px">{{ calLabel }}</span>
+                      <button type="button" onClick="{{ calNext }}" style="background:transparent;border:1px solid var(--line);border-radius:50%;width:34px;height:34px;color:var(--brand-ink);cursor:pointer;font-size:14px">→</button>
+                    </div>
+                    <div style="margin-top:14px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
+                      <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+                        <div style="text-align:center;font-size:10px;letter-spacing:.1em;color:var(--faint);font-weight:700;padding-bottom:4px">{{ w.l }}</div>
+                      </sc-for>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
+                      <sc-for list="{{ calCells }}" as="c" hint-placeholder-count="35">
+                        <div style="aspect-ratio:1;border-radius:9px;border:1px solid {{ c.bd }};background:{{ c.bg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+                          <span style="font-size:12px;color:{{ c.numFg }};font-weight:{{ c.numWeight }}">{{ c.day }}</span>
+                          <span style="width:5px;height:5px;border-radius:50%;background:{{ c.dot }}"></span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <div style="margin-top:22px;padding:0 4px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--accent)">En {{ calMonthName }}</div>
+                  <div style="margin-top:9px;display:flex;flex-direction:column;gap:9px">
+                    <sc-for list="{{ monthPeople }}" as="p" hint-placeholder-count="3">
+                      <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);padding:13px 14px;display:flex;align-items:center;gap:12px">
+                        <span style="width:34px;height:34px;flex:none;border-radius:50%;background:{{ p.bg }};color:{{ p.fg }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">{{ p.initials }}</span>
+                        <span style="flex:1;font-size:15px;font-weight:600">{{ p.name }}</span>
+                        <span style="font-size:12px;color:var(--muted)">{{ p.sub }}</span>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{ monthEmpty }}" hint-placeholder-val="{{ no }}">
+                      <div style="padding:20px 4px;font-size:13px;color:var(--muted)">Ninguna fecha este mes.</div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <!-- GASTOS -->
+          <sc-if value="{{ isGastos }}" hint-placeholder-val="{{ no }}" data-screen-label="Gastos">
+            <div style="padding:56px 18px 100px;animation:sIn .26s ease-out">
+              <h1 style="margin:0 4px;font-family:'Instrument Serif',Georgia,serif;font-size:40px;line-height:1;font-weight:400">Gastos</h1>
+
+              <div style="margin-top:16px;background:var(--wine);color:var(--onwine);border-radius:20px;padding:20px;box-shadow:0 8px 22px rgba(43,16,21,.14)">
+                <button type="button" onClick="{{ toggleBars }}" style="width:100%;text-align:left;background:transparent;border:0;padding:0;cursor:pointer;color:inherit">
+                  <span style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+                    <span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--onwine3)">Tu saldo neto</span>
+                    <span style="font-size:11.5px;color:var(--onwine2)">{{ netSub }}</span>
+                  </span>
+                  <span style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:6px">
+                    <span style="font-family:'Instrument Serif',Georgia,serif;font-size:46px;line-height:.95">{{ netLabel }}</span>
+                    <span style="display:flex;align-items:center;gap:7px;padding-bottom:7px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--onwine3);white-space:nowrap">{{ barsLabel }}<span style="font-size:13px;transform:{{ barsRot }};transition:transform .2s ease">⌄</span></span>
+                  </span>
+                </button>
+                <sc-if value="{{ barsOpen }}" hint-placeholder-val="{{ no }}">
+                  <div style="animation:sIn .22s ease-out">
+                    <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(247,233,228,.28);display:flex;flex-direction:column;gap:9px">
+                      <sc-for list="{{ bars }}" as="b" hint-placeholder-count="4">
+                        <div style="display:flex;align-items:center;gap:10px">
+                          <span style="flex:none;width:46px;font-size:12px;font-weight:600;color:var(--onwine);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.name }}</span>
+                          <span style="flex:1;min-width:0;display:grid;grid-template-columns:1fr 1px 1fr;align-items:center;height:14px">
+                            <span style="display:flex;justify-content:flex-end"><span style="height:9px;border-radius:5px 0 0 5px;background:var(--onwine2);width:{{ b.leftW }};transform-origin:right;animation:grow .5s cubic-bezier(.2,.8,.3,1)"></span></span>
+                            <span style="height:14px;background:rgba(247,233,228,.34)"></span>
+                            <span style="display:flex"><span style="height:9px;border-radius:0 5px 5px 0;background:var(--rose2);width:{{ b.rightW }};transform-origin:left;animation:grow .5s cubic-bezier(.2,.8,.3,1)"></span></span>
+                          </span>
+                          <span style="flex:none;width:70px;text-align:right;font-size:12.5px;font-weight:600;color:{{ b.fg }}">{{ b.amount }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <div style="margin-top:12px;display:flex;justify-content:space-between;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--onwine3);font-weight:700"><span>Le debés</span><span>Te deben</span></div>
+                  </div>
+                </sc-if>
+              </div>
+
+              <div style="margin-top:26px;padding:0 4px;display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+                <span style="font-family:'Instrument Serif',Georgia,serif;font-size:23px">Todos los gastos</span>
+                <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:700">{{ gastosCount }}</span>
+              </div>
+              <div style="margin-top:12px;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:0 16px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                <input value="{{ gSearch }}" onChange="{{ setGSearch }}" placeholder="Buscar gasto o persona" style="flex:1;min-width:0;background:transparent;border:0;outline:none;padding:13px 0;color:var(--ink);font-size:14.5px;font-weight:500">
+              </div>
+
+              <sc-for list="{{ gastoGroups }}" as="g" hint-placeholder-count="3">
+                <div>
+                  <div style="margin-top:20px;padding:0 4px;display:flex;align-items:center;gap:10px">
+                    <span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--accent)">{{ g.label }}</span>
+                    <span style="flex:1;height:1px;background:var(--line)"></span>
+                    <span style="font-size:11px;color:var(--faint);font-weight:600">{{ g.total }}</span>
+                  </div>
+                  <div style="margin-top:9px;display:flex;flex-direction:column;gap:9px">
+                    <sc-for list="{{ g.items }}" as="x" hint-placeholder-count="3">
+                      <button type="button" onClick="{{ x.go }}" style="width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;color:inherit;box-shadow:0 2px 8px rgba(43,16,21,.04)">
+                        <span style="width:38px;height:38px;flex:none;border-radius:50%;background:{{ x.bg }};color:{{ x.fg }};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">{{ x.initials }}</span>
+                        <span style="flex:1;min-width:0">
+                          <span style="display:block;font-size:16px;font-weight:600;letter-spacing:-.01em">{{ x.desc }}</span>
+                          <span style="display:block;margin-top:3px;font-size:12px;color:var(--muted)">{{ x.sub }}</span>
+                        </span>
+                        <span style="flex:none;text-align:right">
+                          <span style="display:block;font-size:16.5px;font-weight:600">{{ x.amount }}</span>
+                          <span style="display:block;margin-top:3px;font-size:11.5px;font-weight:600;color:{{ x.effFg }}">{{ x.eff }}</span>
+                        </span>
+                        <span style="flex:none;color:var(--faint);font-size:15px">›</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ gastosEmpty }}" hint-placeholder-val="{{ no }}">
+                <div style="padding:26px 4px;font-size:13px;color:var(--muted)">Sin gastos que coincidan con esa búsqueda.</div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <!-- DETALLE DE GASTO -->
+          <sc-if value="{{ isGasto }}" hint-placeholder-val="{{ no }}" data-screen-label="Detalle de gasto">
+            <div style="padding:56px 18px 30px;animation:sIn .26s ease-out">
+              <button type="button" onClick="{{ goGastos }}" style="margin-left:4px;background:transparent;border:0;padding:0;color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer">← Gastos</button>
+              <h1 style="margin:14px 4px 0;font-family:'Instrument Serif',Georgia,serif;font-size:32px;line-height:1.05;font-weight:400">{{ gd.desc }}</h1>
+              <div style="margin-top:8px;padding:0 4px;font-size:12.5px;color:var(--muted)">{{ gd.meta }}</div>
+
+              <div style="margin-top:16px;background:var(--wine);color:var(--onwine);border-radius:20px;padding:20px;box-shadow:0 8px 22px rgba(43,16,21,.14)">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+                  <span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--onwine3)">Monto</span>
+                  <span style="font-size:11.5px;color:var(--onwine2)">tu parte {{ gd.myShare }}</span>
+                </div>
+                <div style="margin-top:6px;font-family:'Instrument Serif',Georgia,serif;font-size:44px;line-height:.95">{{ gd.amount }}</div>
+              </div>
+
+              <div style="margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);padding:16px">
+                <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--accent)">{{ gd.stateLabel }}</div>
+                <div style="margin-top:6px;font-family:'Instrument Serif',Georgia,serif;font-size:30px;line-height:1;color:{{ gd.color }}">{{ gd.myAmount }}</div>
+              </div>
+
+              <div style="margin-top:24px;padding:0 4px;display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+                <span style="font-family:'Instrument Serif',Georgia,serif;font-size:23px">Participan</span>
+                <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:700">{{ gd.count }}</span>
+              </div>
+              <div style="margin-top:10px;display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ gd.parts }}" as="p" hint-placeholder-count="4">
+                  <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);padding:13px 14px;display:flex;align-items:center;gap:12px">
+                    <span style="width:36px;height:36px;flex:none;border-radius:50%;background:{{ p.bg }};color:{{ p.fg }};display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700">{{ p.initials }}</span>
+                    <span style="flex:1;min-width:0">
+                      <span style="display:block;font-size:15.5px;font-weight:600">{{ p.label }}</span>
+                      <span style="display:block;margin-top:2px;font-size:11.5px;color:var(--muted)">{{ p.role }}</span>
+                    </span>
+                    <span style="flex:none;font-size:15px;font-weight:600;color:{{ p.fgAmount }}">{{ p.amount }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:9px">
+                <button type="button" onClick="{{ openPagarSheet }}" style="background:var(--wine);border:0;border-radius:14px;padding:16px;color:var(--onwine);font-size:13.5px;font-weight:600;cursor:pointer">Saldar</button>
+                <button type="button" onClick="{{ deleteGasto }}" style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;color:var(--accent);font-size:13.5px;font-weight:600;cursor:pointer">Eliminar gasto</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- PERSONAS -->
+          <sc-if value="{{ isPersonas }}" hint-placeholder-val="{{ no }}" data-screen-label="Personas">
+            <div style="padding:56px 18px 30px;animation:sIn .26s ease-out">
+              <h1 style="margin:0 4px;font-family:'Instrument Serif',Georgia,serif;font-size:40px;line-height:1;font-weight:400">Personas</h1>
+              <div style="margin-top:8px;padding:0 4px;font-size:12.5px;color:var(--muted)">{{ personasSub }}</div>
+              <div style="margin-top:16px;display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ personas }}" as="u" hint-placeholder-count="6">
+                  <button type="button" onClick="{{ u.go }}" style="width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);padding:14px;display:flex;align-items:center;gap:13px;cursor:pointer;color:inherit">
+                    <span style="width:42px;height:42px;flex:none;border-radius:50%;background:{{ u.bg }};color:{{ u.fg }};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">{{ u.initials }}</span>
+                    <span style="flex:1;min-width:0">
+                      <span style="display:block;font-size:16.5px;font-weight:600">{{ u.name }}</span>
+                      <span style="display:block;margin-top:2px;font-size:12px;color:var(--muted)">{{ u.meta }}</span>
+                    </span>
+                    <span style="flex:none;text-align:right">
+                      <span style="display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--faint)">{{ u.state }}</span>
+                      <span style="display:block;margin-top:3px;font-size:15px;font-weight:600;color:{{ u.color }}">{{ u.amount }}</span>
+                    </span>
+                    <span style="flex:none;color:var(--faint);font-size:15px">›</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- PERSONA -->
+          <sc-if value="{{ isPersona }}" hint-placeholder-val="{{ no }}" data-screen-label="Perfil de persona">
+            <div style="padding:56px 18px 30px;animation:sIn .26s ease-out">
+              <button type="button" onClick="{{ goPersonas }}" style="margin-left:4px;background:transparent;border:0;padding:0;color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer">← Personas</button>
+
+              <div style="margin-top:16px;background:var(--wine);color:var(--onwine);border-radius:20px;padding:20px;box-shadow:0 8px 22px rgba(43,16,21,.14);display:flex;align-items:center;gap:14px">
+                <span style="width:58px;height:58px;flex:none;border-radius:50%;background:var(--onwine);color:var(--wine);display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:700">{{ per.initials }}</span>
+                <span style="min-width:0">
+                  <span style="display:block;font-family:'Instrument Serif',Georgia,serif;font-size:30px;line-height:1.02">{{ per.name }}</span>
+                  <span style="display:block;margin-top:4px;font-size:12px;color:var(--onwine2)">Cumple el {{ per.birthday }} · en {{ per.days }} días</span>
+                </span>
+              </div>
+
+              <div style="margin-top:20px;padding:0 4px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--accent)">Alias para transferirle</div>
+              <div style="margin-top:9px;display:flex;align-items:stretch;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);overflow:hidden">
+                <span style="flex:1;min-width:0;padding:15px;font-size:14.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ per.alias }}</span>
+                <button type="button" onClick="{{ copyAlias }}" style="flex:none;background:var(--wine);border:0;padding:0 18px;color:var(--onwine);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">{{ copyLabel }}</button>
+              </div>
+
+              <div style="margin-top:24px;padding:0 4px;display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+                <span style="font-family:'Instrument Serif',Georgia,serif;font-size:23px">Entre ustedes</span>
+                <span style="font-size:18px;font-weight:600;color:{{ per.color }}">{{ per.amount }}</span>
+              </div>
+              <div style="margin-top:10px;display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ per.rows }}" as="r" hint-placeholder-count="2">
+                  <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);padding:14px;display:flex;align-items:center;gap:12px">
+                    <span style="flex:1;min-width:0">
+                      <span style="display:block;font-size:15px;font-weight:600">{{ r.event }}</span>
+                      <span style="display:block;margin-top:2px;font-size:11.5px;color:var(--muted)">{{ r.dir }}</span>
+                    </span>
+                    <span style="font-size:15px;font-weight:600">{{ r.amount }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <button type="button" onClick="{{ openPagarSheet }}" style="margin-top:16px;width:100%;background:var(--wine);border:0;border-radius:14px;padding:17px;color:var(--onwine);font-size:14px;font-weight:600;cursor:pointer">{{ per.cta }}</button>
+            </div>
+          </sc-if>
+
+          <!-- CONFIG -->
+          <sc-if value="{{ isConfig }}" hint-placeholder-val="{{ no }}" data-screen-label="Ajustes">
+            <div style="padding:56px 18px 30px;animation:sIn .26s ease-out">
+              <h1 style="margin:0 4px;font-family:'Instrument Serif',Georgia,serif;font-size:40px;line-height:1;font-weight:400">Ajustes</h1>
+
+              <div style="margin-top:18px;background:var(--wine);color:var(--onwine);border-radius:20px;padding:18px;display:flex;align-items:center;gap:13px;box-shadow:0 8px 22px rgba(43,16,21,.14)">
+                <span style="width:48px;height:48px;flex:none;border-radius:50%;background:var(--onwine);color:var(--wine);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700">{{ meInitials }}</span>
+                <span style="flex:1;min-width:0">
+                  <span style="display:block;font-size:18px;font-weight:600">{{ meName }}</span>
+                  <span style="display:block;margin-top:2px;font-size:12px;color:var(--onwine2)">{{ meAlias }} · {{ meBday }}</span>
+                </span>
+              </div>
+
+              <div style="margin-top:24px;padding:0 4px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--accent)">Avisos</div>
+              <div style="margin-top:10px;display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ notifRows }}" as="r" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ r.toggle }}" style="width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);padding:14px;display:flex;align-items:center;gap:14px;cursor:pointer;color:inherit">
+                    <span style="flex:1;min-width:0">
+                      <span style="display:block;font-size:14.5px;font-weight:600">{{ r.label }}</span>
+                      <span style="display:block;margin-top:2px;font-size:11.5px;color:var(--muted)">{{ r.sub }}</span>
+                    </span>
+                    <span style="width:46px;height:27px;flex:none;border-radius:999px;padding:2px;box-sizing:border-box;display:flex;background:{{ r.trackBg }};border:1px solid {{ r.trackBd }};justify-content:{{ r.justify }};transition:background .2s ease">
+                      <span style="width:21px;height:21px;border-radius:50%;background:{{ r.knob }};transition:all .2s ease"></span>
+                    </span>
+                  </button>
+                </sc-for>
+              </div>
+
+              <div style="margin-top:24px;padding:0 4px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--accent)">Apariencia</div>
+              <button type="button" onClick="{{ toggleTheme }}" style="margin-top:10px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);padding:14px;display:flex;align-items:center;gap:14px;cursor:pointer;color:inherit">
+                <span style="flex:1;min-width:0">
+                  <span style="display:block;font-size:14.5px;font-weight:600">Modo oscuro</span>
+                  <span style="display:block;margin-top:2px;font-size:11.5px;color:var(--muted)">{{ themeSub }}</span>
+                </span>
+                <span style="width:46px;height:27px;flex:none;border-radius:999px;padding:2px;box-sizing:border-box;display:flex;background:{{ themeTrackBg }};border:1px solid {{ themeTrackBd }};justify-content:{{ themeJustify }};transition:background .2s ease">
+                  <span style="width:21px;height:21px;border-radius:50%;background:{{ themeKnob }};transition:all .2s ease"></span>
+                </span>
+              </button>
+
+              <button type="button" onClick="{{ logout }}" style="margin-top:26px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;color:var(--accent);font-size:13.5px;font-weight:600;cursor:pointer">Salir de la sesión</button>
+            </div>
+          </sc-if>
+
+        </div>
+
+        <sc-if value="{{ showFab }}" hint-placeholder-val="{{ no }}">
+          <button type="button" onClick="{{ fabAction }}" aria-label="{{ fabLabel }}" style="position:absolute;right:20px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:30;width:58px;height:58px;border-radius:50%;border:0;background:var(--wine);color:var(--onwine);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(43,16,21,.34);animation:upIn .22s cubic-bezier(.2,.8,.3,1)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+          </button>
+        </sc-if>
+
+        <!-- TAB BAR -->
+        <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ yes }}">
+          <div style="flex:none;background:var(--paper);border-top:1px solid var(--line);padding:8px 14px calc(20px + env(safe-area-inset-bottom));display:flex;gap:4px">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+              <button type="button" onClick="{{ t.go }}" style="flex:1;background:{{ t.bg }};border:0;color:{{ t.fg }};padding:9px 0 8px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ t.icon }}"></svg>
+                {{ t.label }}
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <!-- NOTIFICACIONES -->
+      <sc-if value="{{ notifsOpen }}" hint-placeholder-val="{{ no }}">
+        <div onClick="{{ closeAll }}" style="position:absolute;inset:0;z-index:40;background:rgba(43,16,21,.5);animation:fIn .18s ease-out">
+          <div style="position:absolute;top:0;bottom:0;right:0;width:310px;background:var(--paper);display:flex;flex-direction:column;animation:rIn .24s cubic-bezier(.2,.8,.3,1);box-shadow:-18px 0 40px rgba(43,16,21,.25)">
+            <div style="flex:none;background:var(--wine);color:var(--onwine);padding:58px 18px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+              <span>
+                <span style="display:block;font-family:'Instrument Serif',Georgia,serif;font-size:26px;line-height:1">Avisos</span>
+                <span style="display:block;margin-top:4px;font-size:11px;color:var(--onwine3);font-weight:600">{{ unreadLabel }}</span>
+              </span>
+              <button type="button" onClick="{{ closeAll }}" style="width:30px;height:30px;flex:none;border-radius:50%;background:transparent;border:1px solid rgba(247,233,228,.4);color:var(--onwine);cursor:pointer;font-size:12px">✕</button>
+            </div>
+            <div style="flex:1;min-height:0;overflow-y:auto;padding:4px 18px">
+              <sc-for list="{{ notifList }}" as="n" hint-placeholder-count="3">
+                <div style="margin-top:9px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(43,16,21,.04);display:flex;align-items:flex-start;gap:4px;padding-right:2px">
+                  <button type="button" onClick="{{ n.go }}" style="flex:1;min-width:0;text-align:left;background:transparent;border:0;padding:14px 0 14px 13px;display:flex;gap:11px;align-items:flex-start;cursor:pointer;color:inherit">
+                    <span style="width:30px;height:30px;flex:none;border-radius:50%;background:{{ n.bg }};color:{{ n.fg }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">{{ n.icon }}</span>
+                    <span style="flex:1;min-width:0">
+                      <span style="display:block;font-size:14px;font-weight:600;line-height:1.25">{{ n.title }}</span>
+                      <span style="display:block;margin-top:3px;font-size:12px;color:var(--muted);line-height:1.4">{{ n.body }}</span>
+                    </span>
+                  </button>
+                  <button type="button" onClick="{{ n.dismiss }}" style="flex:none;width:32px;height:48px;background:transparent;border:0;cursor:pointer;color:var(--faint);font-size:12px">✕</button>
+                </div>
+              </sc-for>
+              <sc-if value="{{ notifsEmpty }}" hint-placeholder-val="{{ no }}">
+                <div style="padding:40px 6px;text-align:center;font-size:13px;color:var(--muted)">Estás al día.</div>
+              </sc-if>
+            </div>
+            <button type="button" onClick="{{ dismissAll }}" style="flex:none;margin:14px 18px calc(28px + env(safe-area-inset-bottom));background:transparent;border:1px solid var(--line2);border-radius:999px;padding:13px;cursor:pointer;color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase">Marcar todo leído</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- SHEETS -->
+      <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ no }}">
+        <div onClick="{{ closeAll }}" style="position:absolute;inset:0;z-index:45;background:rgba(43,16,21,.5);display:flex;align-items:flex-end;animation:fIn .18s ease-out">
+          <div style="width:100%;box-sizing:border-box;max-height:calc(100% - 76px);display:flex;flex-direction:column;background:var(--paper);border-radius:22px 22px 0 0;padding:12px 22px calc(30px + env(safe-area-inset-bottom));animation:upIn .26s cubic-bezier(.2,.8,.3,1);box-shadow:0 -18px 44px rgba(43,16,21,.24)">
+            <div style="width:40px;height:4px;border-radius:999px;background:var(--line2);margin:0 auto 16px"></div>
+            <div style="font-family:'Instrument Serif',Georgia,serif;font-size:27px;line-height:1.05">{{ sheetTitle }}</div>
+            <div style="margin-top:6px;font-size:12px;color:var(--muted)">{{ sheetSub }}</div>
+
+            <sc-if value="{{ isPerfilSheet }}" hint-placeholder-val="{{ no }}">
+              <div style="margin-top:18px;display:flex;flex-direction:column">
+                <sc-for list="{{ perfilRows }}" as="r" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ r.go }}" style="width:100%;text-align:left;background:transparent;border:0;border-top:1px solid var(--line);padding:16px 0;display:flex;align-items:center;gap:12px;cursor:pointer;color:inherit">
+                    <span style="flex:1;font-size:15px;font-weight:600">{{ r.label }}</span>
+                    <span style="color:var(--faint);font-size:14px">→</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isFormSheet }}" hint-placeholder-val="{{ yes }}">
+              <div style="flex:1;min-height:0;overflow-y:auto;margin-top:18px;display:flex;flex-direction:column;gap:16px">
+                <sc-for list="{{ sheetFields }}" as="f" hint-placeholder-count="2">
+                  <label style="display:flex;flex-direction:column;gap:9px">
+                    <span style="display:flex;align-items:center;gap:8px">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ f.icon }}"></svg>
+                      <span style="font-size:13.5px;font-weight:600">{{ f.label }}</span>
+                    </span>
+                    <input value="{{ f.value }}" onChange="{{ f.set }}" placeholder="{{ f.ph }}" style="width:100%;box-sizing:border-box;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;color:var(--ink);font-size:15.5px;font-weight:500;outline:none">
+                  </label>
+                </sc-for>
+                <sc-if value="{{ sheetHasChips }}" hint-placeholder-val="{{ no }}">
+                  <div>
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="3.4"></circle><path d="M5.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"></path></svg>
+                      <span style="font-size:13.5px;font-weight:600">Pagado por</span>
+                    </div>
+                    <div style="margin-top:10px;display:flex;gap:8px;overflow-x:auto;padding-bottom:2px">
+                      <sc-for list="{{ payerChips }}" as="p" hint-placeholder-count="5">
+                        <button type="button" onClick="{{ p.pick }}" style="flex:none;display:flex;align-items:center;gap:8px;background:{{ p.boxBg }};border:1px solid {{ p.boxBd }};border-radius:999px;padding:5px 14px 5px 5px;cursor:pointer;font-size:13px;font-weight:600;color:{{ p.boxFg }};white-space:nowrap">
+                          <span style="width:24px;height:24px;border-radius:50%;background:{{ p.bg }};color:{{ p.fg }};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">{{ p.initials }}</span>
+                          {{ p.name }}
+                        </button>
+                      </sc-for>
+                    </div>
+
+                    <div style="margin-top:22px;display:flex;align-items:center;gap:8px">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3 20c0-3.1 2.7-5.1 6-5.1s6 2 6 5.1"></path><path d="M16 5.6a3 3 0 0 1 0 5.8M17.4 19.8c0-2.2-.6-3.7-1.9-4.8"></path></svg>
+                      <span style="font-size:13.5px;font-weight:600">Se divide entre</span>
+                    </div>
+                    <div style="margin-top:10px;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:0 16px">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                      <input value="{{ pSearch }}" onChange="{{ setPSearch }}" placeholder="{{ searchPh }}" style="flex:1;min-width:0;background:transparent;border:0;outline:none;padding:13px 0;color:var(--ink);font-size:14.5px;font-weight:500">
+                    </div>
+                    <div style="margin-top:10px;display:flex;gap:7px;overflow-x:auto;padding-bottom:2px">
+                      <sc-for list="{{ quickPicks }}" as="q" hint-placeholder-count="4">
+                        <button type="button" onClick="{{ q.go }}" style="flex:none;background:{{ q.bg }};border:1px solid {{ q.bd }};border-radius:999px;padding:8px 13px;font-size:12px;font-weight:600;color:{{ q.fg }};cursor:pointer;white-space:nowrap">{{ q.label }}</button>
+                      </sc-for>
+                    </div>
+
+                    <div style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+                      <span style="font-size:13.5px;font-weight:600">Participantes</span>
+                      <span style="font-size:12px;font-weight:700;color:var(--accent)">{{ selCount }}</span>
+                    </div>
+                    <div style="margin-top:10px;max-height:196px;overflow-y:auto;display:flex;flex-direction:column;gap:8px">
+                      <sc-for list="{{ peopleOptions }}" as="c" hint-placeholder-count="6">
+                        <button type="button" onClick="{{ c.toggle }}" style="width:100%;text-align:left;background:var(--card);border:1px solid {{ c.rowBd }};border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:11px;cursor:pointer;color:inherit">
+                          <span style="width:32px;height:32px;flex:none;border-radius:50%;background:{{ c.bg }};color:{{ c.fg }};display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700">{{ c.initials }}</span>
+                          <span style="flex:1;min-width:0;font-size:15px;font-weight:600">{{ c.name }}</span>
+                          <span style="flex:none;width:24px;height:24px;border-radius:7px;border:1.5px solid {{ c.boxBd }};background:{{ c.boxBg }};color:var(--onwine);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">{{ c.check }}</span>
+                        </button>
+                      </sc-for>
+                      <sc-if value="{{ peopleEmpty }}" hint-placeholder-val="{{ no }}">
+                        <div style="padding:18px 2px;font-size:13px;color:var(--muted)">Nadie con ese nombre.</div>
+                      </sc-if>
+                    </div>
+                    <div style="margin-top:12px;font-size:12.5px;color:var(--muted)">{{ splitHint }}</div>
+                  </div>
+                </sc-if>
+                <button type="button" onClick="{{ confirmSheet }}" style="margin-top:2px;background:var(--wine);border:0;border-radius:12px;padding:17px;color:var(--onwine);font-size:14.5px;font-weight:600;cursor:pointer">{{ sheetCta }}</button>
+                <button type="button" onClick="{{ closeAll }}" style="background:transparent;border:0;padding:2px;color:var(--muted);font-size:12.5px;font-weight:600;cursor:pointer">Cancelar</button>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- TOAST -->
+      <sc-if value="{{ toast }}" hint-placeholder-val="{{ no }}">
+        <div style="position:absolute;left:20px;right:20px;bottom:98px;z-index:60;background:var(--wine);border-radius:12px;padding:14px 16px;font-size:13px;font-weight:500;color:var(--onwine);animation:upIn .22s ease-out;box-shadow:0 14px 30px rgba(43,16,21,.3)">{{ toast }}</div>
+      </sc-if>
+
+    </div>
+  </x-import>
+
+  <div style="max-width:430px;font-size:12px;line-height:1.6;color:var(--muted);text-align:center">LosMo Pay · rediseño v2 — papel crema, tinta bordó. Sin eventos: todos los gastos en una sola lista, con selector de participantes buscable.</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:1100},&quot;meName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Nacho&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;privateAmounts&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Comportamiento&quot;},&quot;navStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;4 tabs&quot;,&quot;3 tabs&quot;],&quot;default&quot;:&quot;4 tabs&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comportamiento&quot;}}">
+class Component extends DCLogic {
+  state = {
+    screen: "login", notifs: false, sheet: null, toast: null,
+    name: "Nacho", pin: "",
+    feedRange: "mes", fechasView: "lista",
+    search: "", gSearch: "", pSearch: "", calMonth: 8, calYear: 2026,
+    gastoId: "g1", personaId: "u2", copied: false, barsOpen: false,
+    dismissed: [], settled: [],
+    prefs: { cumple: true, gasto: true, resumen: false }, theme: "claro",
+    sheetName: "", sheetAmount: "", payer: "u1", chips: ["u1", "u2", "u3", "u4"]
+  };
+
+  P = {
+    u1: { bg: "#4a0e1a", fg: "#f7e9e4" }, u2: { bg: "#a83243", fg: "#ffffff" },
+    u3: { bg: "#7e2230", fg: "#ffffff" }, u4: { bg: "#e2cfc6", fg: "#3a0b12" },
+    u5: { bg: "#2b1015", fg: "#f7e9e4" }, u6: { bg: "#c9a05e", fg: "#2b1015" },
+    u7: { bg: "#d8c0b6", fg: "#3a0b12" }, u8: { bg: "#6b1622", fg: "#f7e9e4" },
+    u9: { bg: "#b06a66", fg: "#ffffff" }, u10: { bg: "#3b1119", fg: "#f7e9e4" },
+    u11: { bg: "#e8c9c4", fg: "#3a0b12" }, u12: { bg: "#8c2b3a", fg: "#ffffff" },
+    u13: { bg: "#cdb4a8", fg: "#2b1015" }, u14: { bg: "#571421", fg: "#f7e9e4" }
+  };
+
+  USERS = [
+    { id: "u1", name: "Nacho", alias: "nacho.losmo", bday: "27 de noviembre", days: 77 },
+    { id: "u2", name: "Sofi", alias: "sofi.mp", bday: "14 de septiembre", days: 3 },
+    { id: "u3", name: "Mica", alias: "mica.ahorro", bday: "21 de septiembre", days: 10 },
+    { id: "u4", name: "Facu", alias: "facundo.g", bday: "8 de octubre", days: 27 },
+    { id: "u5", name: "Caro", alias: "caro.bank", bday: "11 de septiembre", days: 0 },
+    { id: "u6", name: "Juli", alias: "juli.mp", bday: "3 de marzo", days: 173 },
+    { id: "u7", name: "Tomi", alias: "tomi.g", bday: "19 de enero", days: 130 },
+    { id: "u8", name: "Lu", alias: "lu.losmo", bday: "2 de diciembre", days: 82 },
+    { id: "u9", name: "Pedro", alias: "pedro.uala", bday: "28 de junio", days: 290 },
+    { id: "u10", name: "Vicky", alias: "vicky.mp", bday: "7 de julio", days: 299 },
+    { id: "u11", name: "Nico", alias: "nico.brubank", bday: "15 de abril", days: 216 },
+    { id: "u12", name: "Agus", alias: "agus.mp", bday: "30 de octubre", days: 49 },
+    { id: "u13", name: "Belu", alias: "belu.g", bday: "11 de febrero", days: 153 },
+    { id: "u14", name: "Martín", alias: "martin.mp", bday: "24 de mayo", days: 255 }
+  ];
+
+  PEOPLE = [
+    { uid: "u5", name: "Caro", days: 0, date: "11 sep", age: "cumple 31", md: [9, 11] },
+    { uid: "u2", name: "Sofi", days: 3, date: "14 sep", age: "cumple 31", md: [9, 14] },
+    { uid: "u3", name: "Mica", days: 10, date: "21 sep", age: "cumple 28", md: [9, 21] },
+    { uid: "u4", name: "Facu", days: 27, date: "8 oct", age: "cumple 35", md: [10, 8] },
+    { uid: "u1", name: "Nacho", days: 77, date: "27 nov", age: "cumple 32", md: [11, 27] }
+  ];
+
+  GASTOS = [
+    { id: "g1", desc: "Súper del finde", payer: "u2", amount: 58500, parts: ["u1", "u2", "u3", "u4"], date: "Hoy", days: 0 },
+    { id: "g2", desc: "Nafta a Córdoba", payer: "u1", amount: 28000, parts: ["u1", "u2", "u3", "u4"], date: "Hoy", days: 0 },
+    { id: "g3", desc: "Cancha del jueves", payer: "u4", amount: 24000, parts: ["u1", "u3", "u4", "u7"], date: "Ayer", days: 1 },
+    { id: "g4", desc: "Alquiler de la cabaña", payer: "u1", amount: 180000, parts: ["u1", "u2", "u3", "u4"], date: "8 sep", days: 3 },
+    { id: "g5", desc: "Restaurante de Sofi", payer: "u2", amount: 78800, parts: ["u1", "u2", "u3", "u4", "u5"], date: "29 ago", days: 13 },
+    { id: "g6", desc: "Torta de cumpleaños", payer: "u5", amount: 18000, parts: ["u1", "u2", "u5"], date: "29 ago", days: 13 },
+    { id: "g7", desc: "Asado del domingo", payer: "u3", amount: 18000, parts: ["u1", "u3", "u4", "u6", "u8"], date: "26 ago", days: 16 }
+  ];
+
+  NOTIFS = [
+    { id: "n1", icon: "CA", title: "Hoy cumple Caro", body: "31 años. Caé con el saludo antes de que se haga tarde.", to: "fechas", tone: "a" },
+    { id: "n2", icon: "SO", title: "Sofi cargó un gasto", body: "“Súper del finde” · $58.500 entre 4", to: "gastos", tone: "b" },
+    { id: "n3", icon: "FA", title: "Facu te saldó $9.000", body: "Hace 2 horas · queda al día", to: "gastos", tone: "b" }
+  ];
+
+  initials(s) { return s.trim().split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase(); }
+  money(n) {
+    if (this.props.privateAmounts === true) return "•••••";
+    return "$" + Math.abs(Math.round(n)).toLocaleString("es-AR");
+  }
+  signed(n) { return (n > 0 ? "+" : n < 0 ? "−" : "") + this.money(n); }
+  set(k, v) { this.setState({ [k]: v }); }
+  go(screen) { return () => this.setState({ screen, notifs: false, sheet: null }); }
+  flash(msg) {
+    this.setState({ toast: msg, sheet: null });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ toast: null }), 2300);
+  }
+  pill(active) {
+    return active
+      ? { bg: "var(--wine)", bd: "var(--wine)", fg: "var(--onwine)", bgHard: "var(--wine)", fgHard: "var(--onwine)" }
+      : { bg: "transparent", bd: "var(--line2)", fg: "var(--muted)", bgHard: "transparent", fgHard: "var(--muted)" };
+  }
+  seg(list, current, key) {
+    return list.map(o => ({ label: o.label, go: () => this.setState({ [key]: o.value }), ...this.pill(current === o.value) }));
+  }
+  share(g) { return g.amount / g.parts.length; }
+  myShare(g) { return g.parts.includes("u1") ? this.share(g) : 0; }
+  myEffect(g) {
+    const sh = this.share(g);
+    if (g.payer === "u1") return g.parts.filter(id => id !== "u1").length * sh;
+    return g.parts.includes("u1") ? -sh : 0;
+  }
+  balances() {
+    const b = {};
+    this.GASTOS.forEach(g => {
+      const sh = this.share(g);
+      if (g.payer === "u1") g.parts.forEach(id => { if (id !== "u1") b[id] = (b[id] || 0) + sh; });
+      else if (g.parts.includes("u1")) b[g.payer] = (b[g.payer] || 0) - sh;
+    });
+    this.state.settled.forEach(id => { delete b[id]; });
+    return b;
+  }
+  net() { const b = this.balances(); return Object.keys(b).reduce((s, k) => s + b[k], 0); }
+  ledgerFor(uid) {
+    if (uid === "u1" || this.state.settled.includes(uid)) return { amount: 0, rows: [] };
+    const rows = [];
+    this.GASTOS.forEach(g => {
+      const sh = this.share(g);
+      if (g.payer === "u1" && g.parts.includes(uid)) rows.push({ event: g.desc, dir: "te debe su parte", signed: sh });
+      else if (g.payer === uid && g.parts.includes("u1")) rows.push({ event: g.desc, dir: "le debés tu parte", signed: -sh });
+    });
+    return { amount: rows.reduce((s, r) => s + r.signed, 0), rows };
+  }
+
+  calendarCells() {
+    const { calMonth, calYear } = this.state;
+    const lead = (new Date(calYear, calMonth, 1).getDay() + 6) % 7;
+    const total = new Date(calYear, calMonth + 1, 0).getDate();
+    const m = calMonth + 1;
+    const byDay = {};
+    this.PEOPLE.forEach(p => { if (p.md[0] === m) (byDay[p.md[1]] = byDay[p.md[1]] || []).push(p); });
+    const out = [];
+    for (let i = 0; i < lead; i++) out.push({ day: "", bg: "transparent", bd: "transparent", numFg: "transparent", numWeight: 400, dot: "transparent" });
+    for (let d = 1; d <= total; d++) {
+      const hit = (byDay[d] || []).length;
+      const today = calYear === 2026 && m === 9 && d === 11;
+      out.push({
+        day: d,
+        bg: today ? "var(--wine)" : hit ? "var(--card)" : "transparent",
+        bd: today ? "var(--wine)" : hit ? "var(--rose2)" : "var(--line)",
+        numFg: today ? "var(--onwine)" : hit ? "var(--ink)" : "var(--faint)",
+        numWeight: hit || today ? 700 : 400,
+        dot: today ? "var(--onwine)" : hit ? "var(--rose2)" : "transparent"
+      });
+    }
+    return out;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const meName = this.props.meName ?? "Nacho";
+    const me = this.USERS[0];
+    const screen = s.screen;
+    const titles = { login: "Login", home: "Inicio", fechas: "Fechas", gastos: "Gastos", gasto: "Detalle de gasto", personas: "Personas", persona: "Perfil", config: "Ajustes" };
+    const visible = this.NOTIFS.filter(n => !s.dismissed.includes(n.id));
+    const netTotal = this.net();
+
+    const pills = [["login", "Login"], ["home", "Inicio"], ["fechas", "Fechas"], ["gastos", "Gastos"], ["gasto", "Gasto"], ["personas", "Personas"], ["persona", "Perfil"], ["config", "Ajustes"]]
+      .map(([v, l]) => ({ label: l, go: this.go(v), ...this.pill(screen === v) }));
+
+    const ICONS = {
+      home: '<path d="M3 11l9-7.5 9 7.5"></path><path d="M5.5 9.8V20h13V9.8"></path>',
+      fechas: '<rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path>',
+      gastos: '<path d="M3 7h18v12H3z"></path><path d="M3 11h18"></path><circle cx="8" cy="15" r="1.4"></circle>',
+      personas: '<circle cx="9" cy="8" r="3.4"></circle><path d="M3 20c0-3.2 2.7-5.2 6-5.2s6 2 6 5.2"></path><path d="M16 5.4a3.2 3.2 0 0 1 0 6.1M17.5 19.8c0-2.3-.7-3.9-2-5"></path>'
+    };
+    const fourTabs = this.props.navStyle !== "3 tabs";
+    const tabDefs = fourTabs
+      ? [["home", "Inicio"], ["fechas", "Fechas"], ["gastos", "Gastos"], ["personas", "Personas"]]
+      : [["home", "Inicio"], ["fechas", "Fechas"], ["gastos", "Gastos"]];
+    const tabs = tabDefs.map(([v, l]) => {
+      const active = screen === v || (v === "gastos" && screen === "gasto") || (v === "personas" && screen === "persona");
+      return { label: l, go: this.go(v), icon: { __html: ICONS[v] }, bg: active ? "var(--wine)" : "transparent", fg: active ? "var(--onwine)" : "var(--muted)" };
+    });
+
+    const dec = p => ({ ...p, initials: this.initials(p.name), ...this.P[p.uid] });
+    const maxDays = s.feedRange === "semana" ? 7 : s.feedRange === "mes" ? 31 : 400;
+
+    const feedFechas = this.PEOPLE.filter(p => p.days > 0 && p.days <= maxDays).map(p => ({
+      sort: p.days, num: p.days, unit: "días", numFg: "var(--brand-ink)",
+      title: p.name, sub: p.date + " · " + p.age, go: this.go("fechas"),
+      tag: "cumple", tagFg: "var(--accent)", tagBd: "var(--line2)"
+    }));
+    const feed = feedFechas.sort((a, b) => a.sort - b.sort);
+
+    const q = s.search.trim().toLowerCase();
+    const filtered = this.PEOPLE.filter(p => !q || p.name.toLowerCase().includes(q));
+    const groupDefs = [
+      { label: "Esta semana", test: p => p.days <= 7 },
+      { label: "Este mes", test: p => p.days > 7 && p.days <= 31 },
+      { label: "Más adelante", test: p => p.days > 31 }
+    ];
+    const fechasGroups = groupDefs.map(g => {
+      const items = filtered.filter(g.test).map(p => ({
+        ...dec(p), sub: p.date + " · " + p.age,
+        tag: p.uid === "u1" ? "vos" : "cumple", tagFg: "var(--accent)", tagBd: "var(--line2)",
+        daysLabel: p.days === 0 ? "hoy" : p.days, daysUnit: p.days === 0 ? "es el día" : "días",
+        daysFg: p.days === 0 ? "var(--rose)" : "var(--brand-ink)"
+      }));
+      return { label: g.label, count: items.length + (items.length === 1 ? " fecha" : " fechas"), items };
+    }).filter(g => g.items.length);
+
+    const monthNames = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const monthPeople = this.PEOPLE.filter(p => p.md[0] === s.calMonth + 1).map(p => ({ ...dec(p), sub: p.date + " · " + p.age }));
+
+    const bal = this.balances();
+    const balList = Object.keys(bal).map(id => ({ id, name: this.USERS.find(u => u.id === id).name, amount: bal[id] }))
+      .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
+    const maxBar = Math.max.apply(null, balList.map(l => Math.abs(l.amount)).concat([1]));
+    const bars = balList.slice(0, 5).map(l => {
+      const pct = Math.round((Math.abs(l.amount) / maxBar) * 100) + "%";
+      return { name: l.name, amount: this.money(l.amount),
+        fg: l.amount > 0 ? "var(--onwine)" : "var(--onwine2)",
+        leftW: l.amount < 0 ? pct : "0%", rightW: l.amount > 0 ? pct : "0%" };
+    });
+
+    const gq = s.gSearch.trim().toLowerCase();
+    const matches = this.GASTOS.filter(g => {
+      if (!gq) return true;
+      const names = g.parts.concat([g.payer]).map(id => this.USERS.find(u => u.id === id).name.toLowerCase()).join(" ");
+      return g.desc.toLowerCase().includes(gq) || names.includes(gq);
+    });
+    const gastoRow = g => {
+      const payer = this.USERS.find(u => u.id === g.payer);
+      const eff = this.myEffect(g);
+      return { desc: g.desc, amount: this.money(g.amount),
+        sub: (g.payer === "u1" ? "pagaste vos" : "pagó " + payer.name) + " · entre " + g.parts.length,
+        initials: this.initials(payer.name), ...this.P[g.payer],
+        eff: eff > 0 ? "+" + this.money(eff) : eff < 0 ? "−" + this.money(eff) : "no participás",
+        effFg: eff > 0 ? "var(--brand-ink)" : eff < 0 ? "var(--rose)" : "var(--faint)",
+        go: () => this.setState({ screen: "gasto", gastoId: g.id }) };
+    };
+    const dates = [];
+    matches.forEach(g => { if (dates.indexOf(g.date) < 0) dates.push(g.date); });
+    const gastoGroups = dates.map(d => {
+      const items = matches.filter(g => g.date === d);
+      return { label: d, total: this.money(items.reduce((sum, g) => sum + g.amount, 0)), items: items.map(gastoRow) };
+    });
+
+    const gRaw = this.GASTOS.find(g => g.id === s.gastoId) || this.GASTOS[0];
+    const gPayer = this.USERS.find(u => u.id === gRaw.payer);
+    const gEff = this.myEffect(gRaw);
+    const gd = {
+      desc: gRaw.desc, amount: this.money(gRaw.amount),
+      meta: gRaw.date + " · " + (gRaw.payer === "u1" ? "lo pagaste vos" : "lo pagó " + gPayer.name),
+      myShare: gRaw.parts.includes("u1") ? this.money(this.share(gRaw)) : "no participás",
+      count: gRaw.parts.length + " personas",
+      stateLabel: gEff > 0 ? "Te deben por este gasto" : gEff < 0 ? "Debés por este gasto" : "No te afecta",
+      myAmount: gEff === 0 ? "—" : this.money(gEff),
+      color: gEff < 0 ? "var(--rose)" : "var(--ink)",
+      parts: gRaw.parts.map(id => {
+        const u = this.USERS.find(x => x.id === id);
+        return { initials: this.initials(u.name), label: id === "u1" ? u.name + " (vos)" : u.name,
+          role: id === gRaw.payer ? "puso el total" : "le corresponde",
+          amount: id === gRaw.payer ? this.money(gRaw.amount) : this.money(this.share(gRaw)),
+          fgAmount: id === gRaw.payer ? "var(--brand-ink)" : "var(--ink)", ...this.P[id] };
+      })
+    };
+
+    const personas = this.USERS.map(u => {
+      const l = this.ledgerFor(u.id);
+      return { name: u.id === "u1" ? u.name + " (vos)" : u.name, initials: this.initials(u.name), ...this.P[u.id],
+        meta: "cumple el " + u.bday, state: l.amount > 0 ? "te debe" : l.amount < 0 ? "le debés" : "al día",
+        amount: l.amount === 0 ? "—" : this.money(l.amount),
+        color: l.amount > 0 ? "var(--brand-ink)" : l.amount < 0 ? "var(--rose)" : "var(--faint)",
+        go: () => this.setState({ screen: "persona", personaId: u.id, copied: false }) };
+    });
+    const pu = this.USERS.find(u => u.id === s.personaId) || this.USERS[1];
+    const pl = this.ledgerFor(pu.id);
+    const per = { name: pu.name, initials: this.initials(pu.name), birthday: pu.bday, days: pu.days, alias: pu.alias,
+      amount: pl.amount === 0 ? "al día" : this.signed(pl.amount),
+      color: pl.amount > 0 ? "var(--brand-ink)" : pl.amount < 0 ? "var(--rose)" : "var(--muted)",
+      cta: pl.amount < 0 ? "Pagarle " + this.money(pl.amount) : pl.amount > 0 ? "Marcar como cobrado" : "Sin deudas pendientes",
+      rows: pl.rows.map(r => ({ event: r.event, dir: r.dir, amount: this.money(r.signed) })) };
+
+    const notifRows = [
+      ["cumple", "Cumpleaños", "La mañana del día, a las 9."],
+      ["gasto", "Nuevos gastos", "Cuando te suman a un gasto."],
+      ["resumen", "Resumen semanal", "Los lunes, cómo quedó el balance."]
+    ].map(([k, label, sub]) => {
+      const on = s.prefs[k];
+      return { label, sub, toggle: () => this.setState(st => ({ prefs: { ...st.prefs, [k]: !st.prefs[k] } })),
+        trackBg: on ? "var(--wine)" : "transparent", trackBd: on ? "var(--wine)" : "var(--line2)",
+        justify: on ? "flex-end" : "flex-start", knob: on ? "var(--onwine)" : "var(--knob)" };
+    });
+
+    const ICO = {
+      doc: { __html: '<rect x="4" y="3" width="16" height="18" rx="3"></rect><path d="M8 8h8M8 12h8M8 16h5"></path>' },
+      coin: { __html: '<circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5v9M14.4 9.6c0-1-1.1-1.7-2.4-1.7s-2.4.7-2.4 1.7 1.1 1.6 2.4 1.9 2.4.8 2.4 1.9-1.1 1.7-2.4 1.7-2.4-.7-2.4-1.7"></path>' },
+      user: { __html: '<circle cx="12" cy="8" r="3.4"></circle><path d="M5.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"></path>' },
+      cal: { __html: '<rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path>' }
+    };
+    const kind = s.sheet;
+    const sheetFields = kind === "fecha"
+      ? [{ label: "Nombre", value: s.sheetName, ph: "Juli", icon: ICO.user, set: e => this.set("sheetName", e.target.value) },
+         { label: "Fecha", value: s.sheetAmount, ph: "dd / mm / aaaa", icon: ICO.cal, set: e => this.set("sheetAmount", e.target.value) }]
+      : kind === "gasto"
+      ? [{ label: "Descripción", value: s.sheetName, ph: "Súper del finde", icon: ICO.doc, set: e => this.set("sheetName", e.target.value) },
+         { label: "Monto", value: s.sheetAmount, ph: "$0", icon: ICO.coin, set: e => this.set("sheetAmount", e.target.value) }]
+      : [{ label: "Monto a saldar", value: s.sheetAmount, ph: "$12.150", icon: ICO.coin, set: e => this.set("sheetAmount", e.target.value) }];
+
+    const pq = s.pSearch.trim().toLowerCase();
+    const payerChips = [this.USERS[0]].concat(this.USERS.slice(1, 6)).map(u => {
+      const on = s.payer === u.id;
+      return { name: u.id === "u1" ? "Vos" : u.name, initials: this.initials(u.name), ...this.P[u.id],
+        boxBg: on ? "var(--wine)" : "transparent", boxBd: on ? "var(--wine)" : "var(--line2)", boxFg: on ? "var(--onwine)" : "var(--muted)",
+        pick: () => this.set("payer", u.id) };
+    });
+    const peopleFiltered = this.USERS.filter(u => !pq || u.name.toLowerCase().includes(pq));
+    const peopleOptions = peopleFiltered.map(u => {
+      const on = s.chips.includes(u.id);
+      return { name: u.id === "u1" ? u.name + " (vos)" : u.name, initials: this.initials(u.name), ...this.P[u.id],
+        check: on ? "✓" : "", boxBd: on ? "var(--wine)" : "var(--line2)", boxBg: on ? "var(--wine)" : "transparent",
+        rowBd: on ? "var(--wine)" : "var(--line)",
+        toggle: () => this.setState(st => ({ chips: st.chips.includes(u.id) ? st.chips.filter(c => c !== u.id) : st.chips.concat(u.id) })) };
+    });
+    const sameIds = (a, b) => a.length === b.length && a.every(x => b.indexOf(x) >= 0);
+    const quickPicks = [
+      { label: "Todos (" + this.USERS.length + ")", ids: this.USERS.map(u => u.id) },
+      { label: "Los de siempre", ids: ["u1", "u2", "u3", "u4"] },
+      { label: "Solo los visibles", ids: peopleFiltered.map(u => u.id) },
+      { label: "Ninguno", ids: [] }
+    ].map(q => {
+      const on = sameIds(q.ids, s.chips);
+      return { label: q.label, go: () => this.set("chips", q.ids),
+        bg: on ? "var(--wine)" : "transparent", bd: on ? "var(--wine)" : "var(--line2)", fg: on ? "var(--onwine)" : "var(--brand-ink)" };
+    });
+    const amountNum = parseFloat((s.sheetAmount || "").replace(/[^\d]/g, "")) || 0;
+    const splitHint = s.chips.length
+      ? (amountNum ? this.money(amountNum / s.chips.length) + " cada uno" : "Se divide entre " + s.chips.length + " personas")
+      : "Elegí al menos una persona";
+
+    const nextFecha = this.PEOPLE.filter(p => p.days > 0)[0];
+    const today = this.PEOPLE.find(p => p.days === 0);
+
+    const setPin = e => this.set("pin", e.target.value.replace(/\D/g, "").slice(0, 6));
+
+    return {
+      yes: true, no: false, deviceW: 390, deviceH: 844,
+      screenTitle: titles[screen], pills, inApp: screen !== "login", isLogin: screen === "login",
+      isHome: screen === "home", isFechas: screen === "fechas", isGastos: screen === "gastos",
+      isGasto: screen === "gasto", isPersonas: screen === "personas", isPersona: screen === "persona", isConfig: screen === "config",
+      showTabs: ["home", "fechas", "gastos", "personas", "config"].includes(screen), tabs,
+      showFab: screen === "fechas" || screen === "gastos",
+      fabLabel: screen === "fechas" ? "Agregar cumpleaños" : "Cargar gasto",
+      fabAction: screen === "fechas"
+        ? () => this.setState({ sheet: "fecha", sheetName: "", sheetAmount: "" })
+        : () => this.setState({ sheet: "gasto", sheetName: "", sheetAmount: "", pSearch: "" }),
+      meName, meInitials: this.initials(meName), meAlias: me.alias, meBday: me.bday,
+      name: s.name, setName: e => this.set("name", e.target.value),
+      pin: s.pin, setPin, logIn: () => this.setState({ screen: "home", pin: "" }),
+      pinHint: s.pin.length + " de 4 a 6",
+      logout: () => this.setState({ screen: "login", pin: "" }),
+      openNotifs: () => this.setState({ notifs: true }),
+      openPerfil: () => this.setState({ sheet: "perfil" }),
+      closeAll: () => this.setState({ notifs: false, sheet: null }),
+      notifsOpen: s.notifs, toast: s.toast,
+      goFechas: this.go("fechas"), goGastos: this.go("gastos"), goPersonas: this.go("personas"),
+      todayLabel: "Viernes 11 de septiembre",
+      hasToday: !!today, todayName: today ? today.name : "", todayAge: today ? today.age : "",
+      todayInitials: today ? this.initials(today.name) : "",
+      netLabel: netTotal === 0 ? "Al día" : this.signed(netTotal),
+      netSub: netTotal > 0 ? "a favor tuyo" : netTotal < 0 ? "en contra" : "sin deudas abiertas",
+      nextName: nextFecha ? nextFecha.name : "—",
+      nextSub: nextFecha ? "en " + nextFecha.days + " días · " + nextFecha.date : "",
+      feedSegs: this.seg([{ value: "semana", label: "7 días" }, { value: "mes", label: "Mes" }, { value: "todo", label: "Todo" }], s.feedRange, "feedRange"),
+      feed, feedEmpty: feed.length === 0,
+      fechasSegs: this.seg([{ value: "lista", label: "Lista" }, { value: "calendario", label: "Calendario" }], s.fechasView, "fechasView"),
+      isLista: s.fechasView === "lista", isCalendario: s.fechasView === "calendario",
+      search: s.search, setSearch: e => this.set("search", e.target.value),
+      fechasGroups, calCells: this.calendarCells(),
+      calLabel: monthNames[s.calMonth].charAt(0).toUpperCase() + monthNames[s.calMonth].slice(1) + " " + s.calYear,
+      calMonthName: monthNames[s.calMonth],
+      weekdays: ["L", "M", "M", "J", "V", "S", "D"].map(l => ({ l })),
+      monthPeople, monthEmpty: monthPeople.length === 0,
+      calPrev: () => this.setState(st => ({ calMonth: st.calMonth === 0 ? 11 : st.calMonth - 1, calYear: st.calMonth === 0 ? st.calYear - 1 : st.calYear })),
+      calNext: () => this.setState(st => ({ calMonth: st.calMonth === 11 ? 0 : st.calMonth + 1, calYear: st.calMonth === 11 ? st.calYear + 1 : st.calYear })),
+      bars, barsOpen: s.barsOpen,
+      barsLabel: s.barsOpen ? "Ocultar" : "Quién debe",
+      barsRot: s.barsOpen ? "rotate(180deg)" : "none",
+      toggleBars: () => this.setState(st => ({ barsOpen: !st.barsOpen })),
+      gastoGroups, gastosEmpty: gastoGroups.length === 0,
+      gastosCount: matches.length + (matches.length === 1 ? " gasto" : " gastos"),
+      gSearch: s.gSearch, setGSearch: e => this.set("gSearch", e.target.value),
+      gd, deleteGasto: () => { this.setState({ screen: "gastos" }); this.flash("Gasto eliminado"); },
+      personas, per,
+      personasSub: this.USERS.length + " personas en el grupo",
+      copyLabel: s.copied ? "listo" : "copiar",
+      copyAlias: () => { this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
+      notifList: visible.map(n => ({
+        title: n.title, body: n.body, icon: n.icon,
+        bg: n.tone === "a" ? "var(--rose2)" : "#e2cfc6", fg: n.tone === "a" ? "#fff" : "var(--wine)",
+        go: this.go(n.to), dismiss: () => this.setState(st => ({ dismissed: st.dismissed.concat(n.id) }))
+      })),
+      notifsEmpty: visible.length === 0, unread: visible.length, hasUnread: visible.length > 0,
+      unreadLabel: visible.length ? visible.length + " sin leer" : "todo leído",
+      dismissAll: () => this.setState({ dismissed: this.NOTIFS.map(n => n.id) }),
+      notifRows,
+      theme: s.theme, isDark: s.theme === "oscuro",
+      themeSub: s.theme === "oscuro" ? "Papel oscuro, tinta clara" : "Papel crema, tinta bordó",
+      themeTrackBg: s.theme === "oscuro" ? "var(--wine)" : "transparent",
+      themeTrackBd: s.theme === "oscuro" ? "var(--wine)" : "var(--line2)",
+      themeJustify: s.theme === "oscuro" ? "flex-end" : "flex-start",
+      themeKnob: s.theme === "oscuro" ? "var(--onwine)" : "var(--knob)",
+      toggleTheme: () => this.setState(st => ({ theme: st.theme === "oscuro" ? "claro" : "oscuro" })),
+      sheetOpen: !!s.sheet, isPerfilSheet: kind === "perfil", isFormSheet: !!kind && kind !== "perfil",
+      sheetTitle: kind === "fecha" ? "Nueva fecha" : kind === "gasto" ? "Cargar gasto" : kind === "perfil" ? meName : "Saldar deuda",
+      sheetSub: kind === "fecha" ? "Un cumpleaños del grupo" : kind === "gasto" ? "Quién pagó y entre quiénes se reparte" : kind === "perfil" ? me.alias + " · cumple el " + me.bday : "Queda registrado y se descuenta del balance",
+      sheetCta: kind === "fecha" ? "Guardar fecha" : kind === "gasto" ? "Guardar gasto" : "Marcar como pagado",
+      sheetFields, sheetHasChips: kind === "gasto", splitHint,
+      payerChips, peopleOptions, peopleEmpty: peopleOptions.length === 0, quickPicks,
+      pSearch: s.pSearch, setPSearch: e => this.set("pSearch", e.target.value),
+      searchPh: "Buscar entre " + this.USERS.length + " personas",
+      selCount: s.chips.length + " de " + this.USERS.length,
+      perfilRows: [
+        { label: "Mi perfil y alias", go: () => this.setState({ sheet: null, screen: "persona", personaId: "u1" }) },
+        { label: "Personas del grupo", go: this.go("personas") },
+        { label: "Ajustes", go: this.go("config") },
+        { label: "Salir de la sesión", go: () => this.setState({ sheet: null, screen: "login", pin: "" }) }
+      ],
+      openFechaSheet: () => this.setState({ sheet: "fecha", sheetName: "", sheetAmount: "" }),
+      openGastoSheet: () => this.setState({ sheet: "gasto", sheetName: "", sheetAmount: "", pSearch: "" }),
+      openPagarSheet: () => this.setState({ sheet: "pagar", sheetAmount: "" }),
+      confirmSheet: () => this.flash(kind === "fecha" ? "Fecha guardada" : kind === "gasto" ? "Gasto cargado" : "Pago registrado")
+    };
+  }
+}
+
+</script>
+</body>
+</html>
