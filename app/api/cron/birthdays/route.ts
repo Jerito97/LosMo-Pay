@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { and, eq, gte } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { notifications, users } from "@/lib/db/schema";
-import { ageTurning } from "@/lib/dates";
+import { ageTurning, nowInArgentina } from "@/lib/dates";
 
 export async function GET(request: NextRequest) {
   const auth = request.headers.get("authorization");
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const now = new Date();
+  const now = nowInArgentina();
   const allUsers = await db.select().from(users);
 
   const birthdayPeople = allUsers.filter((u) => {
@@ -22,7 +22,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ notified: 0 });
   }
 
-  const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  // now está desplazado a hora argentina (ver nowInArgentina); para volver a
+  // un instante UTC real correspondiente a la medianoche de Argentina, hay
+  // que sumarle de nuevo las 3 horas del desfasaje.
+  const startOfDay = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) + 3 * 60 * 60 * 1000,
+  );
   let notified = 0;
 
   for (const person of birthdayPeople) {

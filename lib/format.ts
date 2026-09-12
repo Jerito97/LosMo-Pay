@@ -1,3 +1,5 @@
+import { nowInArgentina } from "./dates";
+
 export function money(amount: number): string {
   return "$" + Math.round(Math.abs(amount)).toLocaleString("es-AR");
 }
@@ -33,9 +35,12 @@ export const WEEKDAYS_FULL = [
   "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado",
 ];
 
-export function todayLabel(now: Date = new Date()): string {
-  const weekday = WEEKDAYS_FULL[now.getDay()];
-  return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} ${now.getDate()} de ${MONTHS_FULL[now.getMonth()]}`;
+export function todayLabel(now: Date = nowInArgentina()): string {
+  // Getters UTC a propósito: `now` ya viene desplazado a hora argentina
+  // (ver nowInArgentina), así que leerlo con getters locales dependería del
+  // huso horario del proceso que corre el servidor.
+  const weekday = WEEKDAYS_FULL[now.getUTCDay()];
+  return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} ${now.getUTCDate()} de ${MONTHS_FULL[now.getUTCMonth()]}`;
 }
 
 function birthdayToUTCDate(birthday: string): Date {
@@ -52,7 +57,7 @@ export function formatBirthdayShort(birthday: string): string {
   return `${d.getUTCDate()} ${MONTHS_ABBR[d.getUTCMonth()]}`;
 }
 
-export function relativeDateLabel(dateISO: string, now: Date = new Date()): string {
+export function relativeDateLabel(dateISO: string, now: Date = nowInArgentina()): string {
   const d = new Date(dateISO + "T00:00:00Z");
   const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
   const dUTC = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());

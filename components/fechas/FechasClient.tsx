@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Segmented } from "@/components/ui/Segmented";
 import { Avatar } from "@/components/ui/Avatar";
-import { calendarCells } from "@/lib/dates";
+import { calendarCells, nowInArgentina } from "@/lib/dates";
 import { MONTHS_FULL, WEEKDAYS_ABBR } from "@/lib/format";
 
 export interface FechaPerson {
@@ -26,9 +26,11 @@ const GROUPS: Array<{ label: string; test: (days: number) => boolean }> = [
 export function FechasClient({ people }: { people: FechaPerson[] }) {
   const [view, setView] = useState<"lista" | "calendario">("lista");
   const [search, setSearch] = useState("");
-  const now = useMemo(() => new Date(), []);
-  const [calMonth, setCalMonth] = useState(now.getMonth());
-  const [calYear, setCalYear] = useState(now.getFullYear());
+  // Hora argentina fija (no la del dispositivo): así el calendario coincide
+  // con los "días" que ya vienen calculados en el servidor con este mismo huso.
+  const now = useMemo(() => nowInArgentina(), []);
+  const [calMonth, setCalMonth] = useState(now.getUTCMonth());
+  const [calYear, setCalYear] = useState(now.getUTCFullYear());
 
   const filtered = people.filter((p) =>
     p.name.toLowerCase().includes(search.trim().toLowerCase()),

@@ -1,4 +1,24 @@
 const MS_DAY = 86_400_000;
+const ARGENTINA_OFFSET_MS = 3 * 60 * 60 * 1000; // UTC-3, sin horario de verano
+
+/**
+ * "Ahora" en hora argentina, como un Date cuyos getters UTC (getUTCFullYear,
+ * getUTCMonth, getUTCDate, ...) devuelven directamente el año/mes/día/hora
+ * de Buenos Aires. El servidor (Vercel) corre en UTC; sin esto, "hoy" y los
+ * cumpleaños se calculaban con la fecha de Londres, no la de Argentina.
+ */
+export function nowInArgentina(): Date {
+  return new Date(Date.now() - ARGENTINA_OFFSET_MS);
+}
+
+/** Fecha de hoy en Argentina, como "YYYY-MM-DD" (para guardar en columnas `date`). */
+export function todayDateStringArgentina(): string {
+  const now = nowInArgentina();
+  const y = now.getUTCFullYear();
+  const m = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(now.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
 function utcDateOnly(d: Date): number {
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
@@ -9,7 +29,7 @@ function birthdayToUTCDate(birthday: string): Date {
 }
 
 /** Days from `now` until the next occurrence of this birthday (0 = today). */
-export function daysUntilNextBirthday(birthday: string, now: Date = new Date()): number {
+export function daysUntilNextBirthday(birthday: string, now: Date = nowInArgentina()): number {
   const b = birthdayToUTCDate(birthday);
   const todayUTC = utcDateOnly(now);
   let next = Date.UTC(now.getUTCFullYear(), b.getUTCMonth(), b.getUTCDate());
@@ -20,7 +40,7 @@ export function daysUntilNextBirthday(birthday: string, now: Date = new Date()):
 }
 
 /** Age the person turns on their next birthday. */
-export function ageTurning(birthday: string, now: Date = new Date()): number {
+export function ageTurning(birthday: string, now: Date = nowInArgentina()): number {
   const b = birthdayToUTCDate(birthday);
   const days = daysUntilNextBirthday(birthday, now);
   const next = new Date(utcDateOnly(now) + days * MS_DAY);
@@ -38,7 +58,7 @@ export function calendarCells(
   year: number,
   month: number,
   birthdayMonthDays: Array<[number, number]>,
-  now: Date = new Date(),
+  now: Date = nowInArgentina(),
 ): CalendarCell[] {
   const lead = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7;
   const totalDays = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();

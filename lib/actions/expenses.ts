@@ -8,6 +8,7 @@ import { expenseParticipants, expenses, users } from "@/lib/db/schema";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { notifyUsers } from "@/lib/notify";
 import { money } from "@/lib/format";
+import { todayDateStringArgentina } from "@/lib/dates";
 
 export async function createExpense(input: {
   description: string;
@@ -36,6 +37,9 @@ export async function createExpense(input: {
       amount: input.amount,
       payerId: input.payerId,
       createdBy: input.payerId,
+      // El default de la columna es now() de Postgres (UTC): a la noche en
+      // Argentina eso ya cae en el día siguiente. Fijamos la fecha real acá.
+      expenseDate: todayDateStringArgentina(),
     }),
     db.insert(expenseParticipants).values(
       participantIds.map((userId) => ({ expenseId, userId })),
