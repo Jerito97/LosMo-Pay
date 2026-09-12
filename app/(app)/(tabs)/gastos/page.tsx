@@ -2,6 +2,7 @@ import { requireCurrentUser } from "@/lib/auth/session";
 import { getAllUsers, getExpensesWithParticipants, getPayments } from "@/lib/data/queries";
 import { computeBalances, myEffect, netTotal } from "@/lib/balances";
 import { relativeDateLabel } from "@/lib/format";
+import { sortByRecentExpenseActivity } from "@/lib/recency";
 import { GastosBalanceCard } from "@/components/gastos/GastosBalanceCard";
 import { GastosExpenseList } from "@/components/gastos/GastosExpenseList";
 import { GastosFabTrigger } from "@/components/gastos/GastosFabTrigger";
@@ -57,7 +58,10 @@ export default async function GastosPage() {
 
       <GastosFabTrigger
         meId={me.id}
-        users={users.map((u) => ({ id: u.id, username: u.username }))}
+        users={sortByRecentExpenseActivity(users, expenses).map((u) => ({
+          id: u.id,
+          username: u.username,
+        }))}
       />
     </div>
   );
