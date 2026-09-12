@@ -95,6 +95,7 @@ export interface LedgerRow {
 export interface ExpenseForLedger extends ExpenseForBalance {
   description: string;
   expenseDate: string;
+  createdBy: string;
 }
 
 export interface PaymentForLedger extends PaymentForBalance {

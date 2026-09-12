@@ -8,6 +8,13 @@
       "when": 1789170023530,
       "tag": "0000_dazzling_gorilla_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789228072362,
+      "tag": "0001_many_sinister_six",
+      "breakpoints": true
     }
   ]
 }

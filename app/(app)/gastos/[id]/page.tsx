@@ -8,6 +8,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Card, WineCard } from "@/components/ui/Card";
 import { DeleteExpenseButton } from "@/components/gastos/DeleteExpenseButton";
 import { JoinLeaveExpenseButton } from "@/components/gastos/JoinLeaveExpenseButton";
+import { EditParticipantsButton } from "@/components/gastos/EditParticipantsButton";
 
 export default async function GastoDetailPage({
   params,
@@ -26,6 +27,7 @@ export default async function GastoDetailPage({
   const share = shareOf(expense);
   const effect = myEffect(expense, me.id);
   const iParticipate = expense.participantIds.includes(me.id);
+  const canManage = me.isAdmin || expense.createdBy === me.id;
 
   return (
     <div className="px-[18px] pt-14 pb-8">
@@ -105,8 +107,19 @@ export default async function GastoDetailPage({
       </div>
 
       <div className="mt-4 flex flex-col gap-2.5">
-        <JoinLeaveExpenseButton expenseId={expense.id} isParticipant={iParticipate} />
-        <DeleteExpenseButton expenseId={expense.id} />
+        {canManage ? (
+          <>
+            <EditParticipantsButton
+              expenseId={expense.id}
+              meId={me.id}
+              users={users.map((u) => ({ id: u.id, username: u.username }))}
+              currentParticipantIds={expense.participantIds}
+            />
+            <DeleteExpenseButton expenseId={expense.id} />
+          </>
+        ) : (
+          <JoinLeaveExpenseButton expenseId={expense.id} isParticipant={iParticipate} />
+        )}
       </div>
     </div>
   );

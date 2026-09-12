@@ -25,6 +25,7 @@ export async function getExpensesWithParticipants(): Promise<ExpenseForLedger[]>
     description: expense.description,
     amount: expense.amount,
     payerId: expense.payerId,
+    createdBy: expense.createdBy,
     participantIds: byExpense.get(expense.id) ?? [],
     expenseDate: expense.expenseDate,
   }));

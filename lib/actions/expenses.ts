@@ -16,7 +16,7 @@ export async function createExpense(input: {
   payerId: string;
   participantIds: string[];
 }) {
-  await requireCurrentUser();
+  const me = await requireCurrentUser();
 
   const description = input.description.trim();
   if (!description) throw new Error("Falta la descripción");
@@ -36,7 +36,10 @@ export async function createExpense(input: {
       description,
       amount: input.amount,
       payerId: input.payerId,
-      createdBy: input.payerId,
+      // Quien carga el gasto puede no ser quien pagó (por ej. cargás algo
+      // que pagó otra persona). El "dueño" del gasto para permisos de
+      // edición es quien realmente lo cargó, no el payer.
+      createdBy: me.id,
       // El default de la columna es now() de Postgres (UTC): a la noche en
       // Argentina eso ya cae en el día siguiente. Fijamos la fecha real acá.
       expenseDate: todayDateStringArgentina(),
@@ -66,14 +69,6 @@ export async function createExpense(input: {
   revalidatePath("/personas");
 }
 
-export async function deleteExpense(expenseId: string) {
-  await requireCurrentUser();
-  await db.delete(expenses).where(eq(expenses.id, expenseId));
-  revalidatePath("/gastos");
-  revalidatePath("/inicio");
-  revalidatePath("/personas");
-}
-
 async function getExpenseContext(expenseId: string) {
   const [expense, participants] = await Promise.all([
     db.query.expenses.findFirst({ where: eq(expenses.id, expenseId) }),
@@ -84,6 +79,66 @@ async function getExpenseContext(expenseId: string) {
   ]);
   if (!expense) throw new Error("El gasto no existe");
   return { expense, participantIds: participants.map((p) => p.userId) };
+}
+
+function canManageExpense(
+  me: { id: string; isAdmin: boolean },
+  expense: { createdBy: string },
+) {
+  return me.isAdmin || expense.createdBy === me.id;
+}
+
+/** Borrar el gasto entero: solo quien lo cargó o un admin. */
+export async function deleteExpense(expenseId: string) {
+  const me = await requireCurrentUser();
+  const { expense } = await getExpenseContext(expenseId);
+  if (!canManageExpense(me, expense)) {
+    throw new Error("Solo quien cargó este gasto (o un admin) lo puede eliminar");
+  }
+  await db.delete(expenses).where(eq(expenses.id, expenseId));
+  revalidatePath("/gastos");
+  revalidatePath("/inicio");
+  revalidatePath("/personas");
+}
+
+/**
+ * Quien cargó el gasto (o un admin) puede editar la lista completa de
+ * participantes -sumar o sacar a cualquiera-, no solo a sí mismo.
+ */
+export async function updateExpenseParticipants(expenseId: string, participantIds: string[]) {
+  const me = await requireCurrentUser();
+  const { expense, participantIds: current } = await getExpenseContext(expenseId);
+  if (!canManageExpense(me, expense)) {
+    throw new Error("Solo quien cargó este gasto (o un admin) puede editar quién participa");
+  }
+
+  const next = [...new Set(participantIds)];
+  if (next.length === 0) throw new Error("El gasto necesita al menos una persona");
+
+  await db.batch([
+    db
+      .delete(expenseParticipants)
+      .where(eq(expenseParticipants.expenseId, expenseId)),
+    db.insert(expenseParticipants).values(next.map((userId) => ({ expenseId, userId }))),
+  ]);
+
+  const added = next.filter((id) => !current.includes(id));
+  const removed = current.filter((id) => !next.includes(id));
+  const untouched = next.filter((id) => current.includes(id) && id !== me.id);
+  if (added.length || removed.length) {
+    await notifyUsers([...added, ...removed, ...untouched].filter((id) => id !== me.id), {
+      type: "expense_added",
+      title: `${me.username} actualizó un gasto`,
+      body: `"${expense.description}" · ahora se reparte entre ${next.length}`,
+      targetType: "expense",
+      targetId: expenseId,
+    });
+  }
+
+  revalidatePath(`/gastos/${expenseId}`);
+  revalidatePath("/gastos");
+  revalidatePath("/inicio");
+  revalidatePath("/personas");
 }
 
 /** Cualquiera puede sumarse a un gasto, aunque no lo haya cargado quien pagó. */

@@ -6,6 +6,7 @@ import {
   numeric,
   timestamp,
   jsonb,
+  boolean,
   uniqueIndex,
   primaryKey,
 } from "drizzle-orm/pg-core";
@@ -31,6 +32,7 @@ export const users = pgTable(
     alias: text("alias").notNull(),
     pinHash: text("pin_hash").notNull(),
     birthday: date("birthday", { mode: "string" }).notNull(),
+    isAdmin: boolean("is_admin").notNull().default(false),
     themePref: text("theme_pref").notNull().default("claro"),
     notifPrefs: jsonb("notif_prefs")
       .notNull()
