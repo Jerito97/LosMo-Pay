@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { unsealData } from "iron-session";
-import { sessionCookieName, sessionOptions, type SessionData } from "@/lib/auth/session";
+import { getSessionOptions, sessionCookieName, type SessionData } from "@/lib/auth/session";
 
 export async function proxy(request: NextRequest) {
   const cookie = request.cookies.get(sessionCookieName)?.value;
@@ -9,7 +9,7 @@ export async function proxy(request: NextRequest) {
   if (cookie) {
     try {
       const data = await unsealData<SessionData>(cookie, {
-        password: sessionOptions.password,
+        password: getSessionOptions().password,
       });
       userId = data.userId;
     } catch {

@@ -20,20 +20,25 @@ function requireSessionSecret() {
 
 export const sessionCookieName = "losmopay_session";
 
-export const sessionOptions: SessionOptions = {
-  password: requireSessionSecret(),
-  cookieName: sessionCookieName,
-  cookieOptions: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 180, // 180 días
-  },
-};
+// Función (no una constante de módulo): así SESSION_SECRET solo se valida
+// cuando de verdad se maneja una sesión, no cuando Next.js importa este
+// archivo en build time para recolectar datos de las rutas.
+export function getSessionOptions(): SessionOptions {
+  return {
+    password: requireSessionSecret(),
+    cookieName: sessionCookieName,
+    cookieOptions: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 180, // 180 días
+    },
+  };
+}
 
 export async function getSession() {
   const cookieStore = await cookies();
-  return getIronSession<SessionData>(cookieStore, sessionOptions);
+  return getIronSession<SessionData>(cookieStore, getSessionOptions());
 }
 
 export async function getCurrentUser() {
