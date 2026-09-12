@@ -26,6 +26,8 @@ export async function getExpensesWithParticipants(): Promise<ExpenseForLedger[]>
     amount: expense.amount,
     payerId: expense.payerId,
     createdBy: expense.createdBy,
+    updatedBy: expense.updatedBy,
+    updatedAt: expense.updatedAt ? expense.updatedAt.toISOString() : null,
     participantIds: byExpense.get(expense.id) ?? [],
     expenseDate: expense.expenseDate,
   }));
@@ -39,5 +41,6 @@ export async function getPayments(): Promise<PaymentForLedger[]> {
     toUserId: payment.toUserId,
     amount: payment.amount,
     createdAt: payment.createdAt.toISOString(),
+    recordedBy: payment.recordedBy,
   }));
 }

@@ -102,6 +102,45 @@ export async function deleteExpense(expenseId: string) {
 }
 
 /**
+ * Quien cargó el gasto (o un admin) puede corregir descripción/monto sin
+ * tener que borrar y volver a cargar todo.
+ */
+export async function updateExpenseDetails(
+  expenseId: string,
+  input: { description: string; amount: number },
+) {
+  const me = await requireCurrentUser();
+  const { expense, participantIds } = await getExpenseContext(expenseId);
+  if (!canManageExpense(me, expense)) {
+    throw new Error("Solo quien cargó este gasto (o un admin) lo puede editar");
+  }
+
+  const description = input.description.trim();
+  if (!description) throw new Error("Falta la descripción");
+  if (!Number.isFinite(input.amount) || input.amount <= 0) {
+    throw new Error("El monto tiene que ser mayor a cero");
+  }
+
+  await db
+    .update(expenses)
+    .set({ description, amount: input.amount, updatedBy: me.id, updatedAt: new Date() })
+    .where(eq(expenses.id, expenseId));
+
+  await notifyUsers(participantIds.filter((id) => id !== me.id), {
+    type: "expense_added",
+    title: `${me.username} editó un gasto`,
+    body: `"${description}" · ${money(input.amount)} entre ${participantIds.length}`,
+    targetType: "expense",
+    targetId: expenseId,
+  });
+
+  revalidatePath(`/gastos/${expenseId}`);
+  revalidatePath("/gastos");
+  revalidatePath("/inicio");
+  revalidatePath("/personas");
+}
+
+/**
  * Quien cargó el gasto (o un admin) puede editar la lista completa de
  * participantes -sumar o sacar a cualquiera-, no solo a sí mismo.
  */
@@ -120,6 +159,10 @@ export async function updateExpenseParticipants(expenseId: string, participantId
       .delete(expenseParticipants)
       .where(eq(expenseParticipants.expenseId, expenseId)),
     db.insert(expenseParticipants).values(next.map((userId) => ({ expenseId, userId }))),
+    db
+      .update(expenses)
+      .set({ updatedBy: me.id, updatedAt: new Date() })
+      .where(eq(expenses.id, expenseId)),
   ]);
 
   const added = next.filter((id) => !current.includes(id));

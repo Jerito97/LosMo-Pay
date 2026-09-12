@@ -7,6 +7,7 @@ import { daysUntilNextBirthday } from "@/lib/dates";
 import { formatBirthdayFull, initials, money, signedMoney } from "@/lib/format";
 import { AliasCopyCard } from "@/components/personas/AliasCopyCard";
 import { PersonaCta } from "@/components/personas/PersonaCta";
+import { DeletePaymentButton } from "@/components/personas/DeletePaymentButton";
 
 export default async function PersonaDetailPage({
   params,
@@ -63,18 +64,23 @@ export default async function PersonaDetailPage({
         </span>
       </div>
       <div className="mt-2.5 flex flex-col gap-2.5">
-        {rows.map((row) => (
-          <div
-            key={`${row.kind}-${row.id}`}
-            className="flex items-center gap-3 rounded-2xl border border-line bg-card p-3.5 shadow-[0_2px_8px_rgba(43,16,21,0.04)]"
-          >
-            <span className="min-w-0 flex-1">
-              <span className="block text-[15px] font-semibold">{row.label}</span>
-              <span className="mt-0.5 block text-[11.5px] text-muted">{row.direction}</span>
-            </span>
-            <span className="text-[15px] font-semibold">{money(row.amount)}</span>
-          </div>
-        ))}
+        {rows.map((row) => {
+          const canUndo =
+            row.kind === "payment" && (me.isAdmin || row.recordedBy === me.id);
+          return (
+            <div
+              key={`${row.kind}-${row.id}`}
+              className="flex items-center gap-3 rounded-2xl border border-line bg-card p-3.5 shadow-[0_2px_8px_rgba(43,16,21,0.04)]"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block text-[15px] font-semibold">{row.label}</span>
+                <span className="mt-0.5 block text-[11.5px] text-muted">{row.direction}</span>
+              </span>
+              <span className="text-[15px] font-semibold">{money(row.amount)}</span>
+              {canUndo && <DeletePaymentButton paymentId={row.id} />}
+            </div>
+          );
+        })}
         {rows.length === 0 && (
           <div className="px-1 py-4 text-[13px] text-muted">Sin movimientos entre ustedes.</div>
         )}

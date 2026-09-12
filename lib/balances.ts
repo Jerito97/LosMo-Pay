@@ -90,17 +90,21 @@ export interface LedgerRow {
   direction: string;
   amount: number; // firmado: positivo a mi favor
   date: string;
+  recordedBy?: string | null; // solo para kind "payment": quién lo cargó
 }
 
 export interface ExpenseForLedger extends ExpenseForBalance {
   description: string;
   expenseDate: string;
   createdBy: string;
+  updatedBy: string | null;
+  updatedAt: string | null;
 }
 
 export interface PaymentForLedger extends PaymentForBalance {
   id: string;
   createdAt: string;
+  recordedBy: string | null;
 }
 
 /** Detalle del saldo entre `meId` y `otherId`: monto neto + movimientos que lo explican. */
@@ -146,6 +150,7 @@ export function ledgerBetween(
         direction: "te pagó",
         amount: -payment.amount,
         date: payment.createdAt,
+        recordedBy: payment.recordedBy,
       });
     } else if (payment.fromUserId === meId && payment.toUserId === otherId) {
       rows.push({
@@ -155,6 +160,7 @@ export function ledgerBetween(
         direction: "le pagaste",
         amount: payment.amount,
         date: payment.createdAt,
+        recordedBy: payment.recordedBy,
       });
     }
   }

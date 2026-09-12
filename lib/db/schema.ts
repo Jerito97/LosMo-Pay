@@ -58,6 +58,8 @@ export const expenses = pgTable("expenses", {
   createdBy: uuid("created_by")
     .notNull()
     .references(() => users.id),
+  updatedBy: uuid("updated_by").references(() => users.id),
+  updatedAt: timestamp("updated_at", { withTimezone: true }),
   expenseDate: date("expense_date", { mode: "string" })
     .notNull()
     .defaultNow(),
@@ -91,6 +93,9 @@ export const payments = pgTable("payments", {
     .references(() => users.id),
   amount: numeric("amount", { precision: 12, scale: 2, mode: "number" }).notNull(),
   note: text("note"),
+  // Nullable: los pagos ya existentes en producción no tienen quién los
+  // cargó. Todo pago nuevo lo completa siempre.
+  recordedBy: uuid("recorded_by").references(() => users.id),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

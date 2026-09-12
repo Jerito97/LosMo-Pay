@@ -15,6 +15,13 @@
       "when": 1789228072362,
       "tag": "0001_many_sinister_six",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789229244528,
+      "tag": "0002_useful_morg",
+      "breakpoints": true
     }
   ]
 }

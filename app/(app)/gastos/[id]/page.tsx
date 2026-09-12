@@ -3,12 +3,13 @@ import { notFound } from "next/navigation";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { getAllUsers, getExpensesWithParticipants } from "@/lib/data/queries";
 import { myEffect, shareOf } from "@/lib/balances";
-import { money, relativeDateLabel } from "@/lib/format";
+import { money, relativeDateLabel, timeAgo } from "@/lib/format";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card, WineCard } from "@/components/ui/Card";
 import { DeleteExpenseButton } from "@/components/gastos/DeleteExpenseButton";
 import { JoinLeaveExpenseButton } from "@/components/gastos/JoinLeaveExpenseButton";
 import { EditParticipantsButton } from "@/components/gastos/EditParticipantsButton";
+import { EditExpenseButton } from "@/components/gastos/EditExpenseButton";
 
 export default async function GastoDetailPage({
   params,
@@ -28,6 +29,7 @@ export default async function GastoDetailPage({
   const effect = myEffect(expense, me.id);
   const iParticipate = expense.participantIds.includes(me.id);
   const canManage = me.isAdmin || expense.createdBy === me.id;
+  const editor = expense.updatedBy ? usersById.get(expense.updatedBy) : null;
 
   return (
     <div className="px-[18px] pt-14 pb-8">
@@ -44,6 +46,12 @@ export default async function GastoDetailPage({
         {relativeDateLabel(expense.expenseDate)} ·{" "}
         {expense.payerId === me.id ? "lo pagaste vos" : `lo pagó ${payer?.username ?? "?"}`}
       </div>
+      {expense.updatedAt && (
+        <div className="mx-1 mt-0.5 text-[11.5px] text-faint">
+          Editado por {expense.updatedBy === me.id ? "vos" : (editor?.username ?? "?")}{" "}
+          {timeAgo(new Date(expense.updatedAt))}
+        </div>
+      )}
 
       <WineCard className="mt-4">
         <div className="flex items-baseline justify-between gap-2.5">
@@ -109,6 +117,11 @@ export default async function GastoDetailPage({
       <div className="mt-4 flex flex-col gap-2.5">
         {canManage ? (
           <>
+            <EditExpenseButton
+              expenseId={expense.id}
+              currentDescription={expense.description}
+              currentAmount={expense.amount}
+            />
             <EditParticipantsButton
               expenseId={expense.id}
               meId={me.id}
