@@ -9,6 +9,7 @@ import { money } from "@/lib/format";
 export interface PersonaRow {
   id: string;
   name: string;
+  isMe: boolean;
   meta: string;
   net: number; // saldo neto global de esa persona en todo el grupo
 }
@@ -66,7 +67,14 @@ export function PersonasClient({ people }: { people: PersonaRow[] }) {
             >
               <Avatar name={p.name} userId={p.id} size={42} />
               <span className="min-w-0 flex-1">
-                <span className="block text-[16.5px] font-semibold">{p.name}</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="text-[16.5px] font-semibold">{p.name}</span>
+                  {p.isMe && (
+                    <span className="rounded border border-line2 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-accent uppercase">
+                      vos
+                    </span>
+                  )}
+                </span>
                 <span className="mt-0.5 block text-[12px] text-muted">{p.meta}</span>
               </span>
               <span className="flex-none text-right">

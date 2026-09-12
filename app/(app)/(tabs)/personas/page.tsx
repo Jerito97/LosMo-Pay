@@ -14,7 +14,8 @@ export default async function PersonasPage() {
 
   const people = users.map((u) => ({
     id: u.id,
-    name: u.id === me.id ? `${u.username} (vos)` : u.username,
+    name: u.username,
+    isMe: u.id === me.id,
     meta: `cumple el ${formatBirthdayFull(u.birthday)}`,
     // Saldo neto de esta persona contra TODO el grupo (no relativo a quien mira
     // la pantalla): lo mismo que cada uno ve como "Tu saldo neto" en Gastos.

@@ -8,6 +8,7 @@ import { formatBirthdayFull, initials, money, signedMoney } from "@/lib/format";
 import { AliasCopyCard } from "@/components/personas/AliasCopyCard";
 import { PersonaCta } from "@/components/personas/PersonaCta";
 import { DeletePaymentButton } from "@/components/personas/DeletePaymentButton";
+import { DeletePersonButton } from "@/components/personas/DeletePersonButton";
 
 export default async function PersonaDetailPage({
   params,
@@ -87,6 +88,12 @@ export default async function PersonaDetailPage({
       </div>
 
       {person.id !== me.id && <PersonaCta counterpartyId={person.id} amount={amount} />}
+
+      {me.isAdmin && person.id !== me.id && (
+        <div className="mt-4">
+          <DeletePersonButton personId={person.id} personName={person.username} />
+        </div>
+      )}
     </div>
   );
 }
