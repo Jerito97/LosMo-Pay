@@ -109,9 +109,11 @@ export function FechasClient({ people }: { people: FechaPerson[] }) {
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5">
                         <span className="text-[16px] font-semibold">{p.name}</span>
-                        <span className="rounded border border-line2 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-accent uppercase">
-                          {p.isMe ? "vos" : "cumple"}
-                        </span>
+                        {p.isMe && (
+                          <span className="rounded border border-line2 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-accent uppercase">
+                            vos
+                          </span>
+                        )}
                       </span>
                       <span className="mt-0.5 block text-[12px] text-muted">
                         {p.dateShort} · {p.ageLabel}
