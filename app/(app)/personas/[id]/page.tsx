@@ -29,7 +29,7 @@ export default async function PersonaDetailPage({
   const days = daysUntilNextBirthday(person.birthday);
 
   return (
-    <div className="px-[18px] pt-14 pb-8 [animation:sIn_.26s_ease-out]">
+    <div className="px-[18px] pt-14 pb-8">
       <Link
         href="/personas"
         className="ml-1 text-[11px] font-bold tracking-[0.14em] text-accent uppercase"

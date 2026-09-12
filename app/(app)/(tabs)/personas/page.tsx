@@ -14,7 +14,7 @@ export default async function PersonasPage() {
   ]);
 
   return (
-    <div className="px-[18px] pt-14 pb-[100px] [animation:sIn_.26s_ease-out]">
+    <div className="px-[18px] pt-14 pb-[100px]">
       <h1 className="mx-1 font-[family-name:var(--font-display)] text-[40px] leading-none font-normal">
         Personas
       </h1>

@@ -27,7 +27,7 @@ export default async function GastoDetailPage({
   const iParticipate = expense.participantIds.includes(me.id);
 
   return (
-    <div className="px-[18px] pt-14 pb-8 [animation:sIn_.26s_ease-out]">
+    <div className="px-[18px] pt-14 pb-8">
       <Link
         href="/gastos"
         className="ml-1 text-[11px] font-bold tracking-[0.14em] text-accent uppercase"

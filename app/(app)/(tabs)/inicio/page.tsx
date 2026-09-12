@@ -38,7 +38,7 @@ export default async function InicioPage() {
     }));
 
   return (
-    <div className="px-[18px] pt-14 pb-[100px] [animation:sIn_.26s_ease-out]">
+    <div className="px-[18px] pt-14 pb-[100px]">
       <div className="flex items-start justify-between gap-3 px-1">
         <div className="min-w-0">
           <div className="text-[10px] font-bold tracking-[0.18em] text-accent uppercase">

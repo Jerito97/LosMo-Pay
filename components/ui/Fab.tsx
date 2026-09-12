@@ -14,7 +14,7 @@ export function Fab({
           type="button"
           aria-label={label}
           onClick={onClick}
-          className="pointer-events-auto absolute right-5 flex h-[58px] w-[58px] cursor-pointer items-center justify-center rounded-full bg-wine text-onwine shadow-[0_10px_26px_rgba(43,16,21,0.34)] [animation:upIn_.22s_cubic-bezier(.2,.8,.3,1)]"
+          className="pointer-events-auto absolute right-5 flex h-[58px] w-[58px] cursor-pointer items-center justify-center rounded-full bg-wine text-onwine shadow-[0_10px_26px_rgba(43,16,21,0.34)]"
           style={{ bottom: "calc(96px + env(safe-area-inset-bottom))" }}
         >
           <svg
