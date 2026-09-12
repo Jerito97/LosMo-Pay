@@ -64,9 +64,14 @@ export default function LoginPage() {
     <div className="flex min-h-dvh justify-center bg-desk">
       <div className="flex min-h-dvh w-full max-w-[430px] flex-col bg-paper text-ink">
         <div className="flex-none bg-wine px-[26px] pt-[62px] pb-[26px] text-onwine">
-          <div className="font-[family-name:var(--font-display)] text-[50px] leading-[0.95] tracking-tight">
-            LosMo Pay
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo-losmo-pay.png"
+            alt="LosMo Pay"
+            width={88}
+            height={88}
+            className="block rounded-2xl"
+          />
           <div className="mt-3.5 h-px bg-[rgba(247,233,228,0.32)]" />
         </div>
 
