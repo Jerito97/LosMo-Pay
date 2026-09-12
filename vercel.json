@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/birthdays",
       "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-summary",
+      "schedule": "0 12 * * 1"
     }
   ]
 }

@@ -47,6 +47,27 @@ export function ageTurning(birthday: string, now: Date = nowInArgentina()): numb
   return next.getUTCFullYear() - b.getUTCFullYear();
 }
 
+/** Lunes de esta semana en Argentina: como "YYYY-MM-DD" y como instante UTC real. */
+export function startOfWeekArgentina(now: Date = nowInArgentina()): {
+  dateString: string;
+  instant: Date;
+} {
+  const dayIndex = now.getUTCDay(); // 0 domingo .. 6 sábado
+  const daysSinceMonday = (dayIndex + 6) % 7;
+  const mondayUTC = utcDateOnly(now) - daysSinceMonday * MS_DAY;
+  const monday = new Date(mondayUTC);
+  const y = monday.getUTCFullYear();
+  const m = String(monday.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(monday.getUTCDate()).padStart(2, "0");
+  return {
+    dateString: `${y}-${m}-${d}`,
+    // mondayUTC está calculado sobre el reloj ya desplazado de
+    // nowInArgentina(); sumarle de nuevo el offset lo vuelve a convertir en
+    // el instante UTC real de esa medianoche en Argentina.
+    instant: new Date(mondayUTC + ARGENTINA_OFFSET_MS),
+  };
+}
+
 export interface CalendarCell {
   day: number | null;
   hasBirthday: boolean;
