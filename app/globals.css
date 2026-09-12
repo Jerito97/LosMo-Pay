@@ -1,0 +1,103 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="oscuro"], [data-theme="oscuro"] *));
+
+:root,
+[data-theme] {
+  --desk: #efe7dd;
+  --paper: #f7f2ec;
+  --card: #fffdf9;
+  --ink: #2b1015;
+  --muted: #7d675c;
+  --faint: #6f574f;
+  --line: #e6dbd0;
+  --line2: #d2c3b6;
+  --wine: #4a0e1a;
+  --accent: #8a2c3a;
+  --onwine: #f7e9e4;
+  --onwine2: #e8c9c4;
+  --onwine3: #d9a9a4;
+  --rose: #a83243;
+  --rose2: #c94e5e;
+  --knob: #c3b0a4;
+  --brand-ink: #4a0e1a;
+}
+
+[data-theme="oscuro"] {
+  --desk: #120709;
+  --paper: #170a0d;
+  --card: #241216;
+  --ink: #f4e9e4;
+  --muted: #bd9d96;
+  --faint: #c9aba5;
+  --line: #3b1d22;
+  --line2: #4e262d;
+  --wine: #5e1526;
+  --accent: #eaa3a6;
+  --rose: #c94e5e;
+  --rose2: #d9707c;
+  --knob: #7d5c58;
+  --brand-ink: #f4e9e4;
+}
+
+@theme {
+  --color-desk: var(--desk);
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line2: var(--line2);
+  --color-wine: var(--wine);
+  --color-accent: var(--accent);
+  --color-onwine: var(--onwine);
+  --color-onwine2: var(--onwine2);
+  --color-onwine3: var(--onwine3);
+  --color-rose: var(--rose);
+  --color-rose2: var(--rose2);
+  --color-knob: var(--knob);
+  --color-brand-ink: var(--brand-ink);
+
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-sans: "Archivo", system-ui, sans-serif;
+}
+
+@keyframes sIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes upIn {
+  from { transform: translateY(26px); opacity: 0.4; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes rIn {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+@keyframes grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+body {
+  margin: 0;
+  background: var(--desk);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input {
+  font-family: var(--font-sans);
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible {
+  outline: 2px solid var(--rose2);
+  outline-offset: 2px;
+}
