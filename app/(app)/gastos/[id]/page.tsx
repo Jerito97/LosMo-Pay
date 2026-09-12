@@ -7,6 +7,7 @@ import { money, relativeDateLabel } from "@/lib/format";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card, WineCard } from "@/components/ui/Card";
 import { DeleteExpenseButton } from "@/components/gastos/DeleteExpenseButton";
+import { JoinLeaveExpenseButton } from "@/components/gastos/JoinLeaveExpenseButton";
 
 export default async function GastoDetailPage({
   params,
@@ -103,7 +104,8 @@ export default async function GastoDetailPage({
         })}
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 flex flex-col gap-2.5">
+        <JoinLeaveExpenseButton expenseId={expense.id} isParticipant={iParticipate} />
         <DeleteExpenseButton expenseId={expense.id} />
       </div>
     </div>
