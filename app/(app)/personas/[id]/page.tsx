@@ -9,6 +9,7 @@ import { AliasCopyCard } from "@/components/personas/AliasCopyCard";
 import { PersonaCta } from "@/components/personas/PersonaCta";
 import { DeletePaymentButton } from "@/components/personas/DeletePaymentButton";
 import { DeletePersonButton } from "@/components/personas/DeletePersonButton";
+import { EditProfileButton } from "@/components/personas/EditProfileButton";
 
 export default async function PersonaDetailPage({
   params,
@@ -57,6 +58,16 @@ export default async function PersonaDetailPage({
         Alias para transferirle
       </div>
       <AliasCopyCard alias={person.alias} />
+
+      {person.id === me.id && (
+        <div className="mt-4">
+          <EditProfileButton
+            currentUsername={person.username}
+            currentAlias={person.alias}
+            currentBirthday={person.birthday}
+          />
+        </div>
+      )}
 
       <div className="mt-6 flex items-baseline justify-between gap-2.5 px-1">
         <span className="font-[family-name:var(--font-display)] text-[23px]">Entre ustedes</span>
