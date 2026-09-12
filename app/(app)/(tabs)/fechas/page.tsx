@@ -12,7 +12,7 @@ export default async function FechasPage() {
     const d = new Date(u.birthday + "T00:00:00Z");
     return {
       id: u.id,
-      name: u.id === me.id ? `${u.username} (vos)` : u.username,
+      name: u.username,
       isMe: u.id === me.id,
       days: daysUntilNextBirthday(u.birthday),
       dateShort: formatBirthdayShort(u.birthday),
