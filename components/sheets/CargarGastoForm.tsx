@@ -67,7 +67,7 @@ export function CargarGastoForm({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
+    <div className="flex flex-col gap-4">
       <div>
         <div className="font-[family-name:var(--font-display)] text-[27px] leading-tight">
           Cargar gasto

@@ -44,8 +44,35 @@ export function OverlayProvider({ children }: { children: ReactNode }) {
     timerRef.current = setTimeout(() => setToast(null), 2300);
   }, []);
 
-  const openSheet = useCallback((content: ReactNode) => setSheet(content), []);
+  const openSheet = useCallback((content: ReactNode) => {
+    setDragOffset(0);
+    setSheet(content);
+  }, []);
   const closeSheet = useCallback(() => setSheet(null), []);
+
+  const [dragOffset, setDragOffset] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const dragStartY = useRef<number | null>(null);
+
+  function handleDragStart(event: React.PointerEvent) {
+    dragStartY.current = event.clientY;
+    setDragging(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+  function handleDragMove(event: React.PointerEvent) {
+    if (dragStartY.current === null) return;
+    const delta = event.clientY - dragStartY.current;
+    if (delta > 0) setDragOffset(delta);
+  }
+  function handleDragEnd() {
+    if (dragStartY.current === null) return;
+    dragStartY.current = null;
+    setDragging(false);
+    if (dragOffset > 110) {
+      closeSheet();
+    }
+    setDragOffset(0);
+  }
 
   return (
     <ToastContext.Provider value={{ showToast }}>
@@ -58,11 +85,23 @@ export function OverlayProvider({ children }: { children: ReactNode }) {
             onClick={closeSheet}
           >
             <div
-              className="flex max-h-[calc(100%-76px)] w-full max-w-[430px] flex-col rounded-t-[22px] bg-paper px-[22px] pt-3 shadow-[0_-18px_44px_rgba(43,16,21,0.24)] [animation:upIn_.26s_cubic-bezier(.2,.8,.3,1)]"
-              style={{ paddingBottom: "calc(30px + env(safe-area-inset-bottom))" }}
+              className="flex max-h-[calc(100%-76px)] w-full max-w-[430px] flex-col overflow-y-auto rounded-t-[22px] bg-paper px-[22px] pt-3 shadow-[0_-18px_44px_rgba(43,16,21,0.24)] [animation:upIn_.26s_cubic-bezier(.2,.8,.3,1)]"
+              style={{
+                paddingBottom: "calc(30px + env(safe-area-inset-bottom))",
+                transform: dragOffset ? `translateY(${dragOffset}px)` : undefined,
+                transition: dragging ? "none" : "transform .2s ease",
+              }}
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-line2" />
+              <div
+                className="sticky top-0 -mx-[22px] cursor-grab touch-none bg-paper px-[22px] pb-4 active:cursor-grabbing"
+                onPointerDown={handleDragStart}
+                onPointerMove={handleDragMove}
+                onPointerUp={handleDragEnd}
+                onPointerCancel={handleDragEnd}
+              >
+                <div className="mx-auto h-1 w-10 rounded-full bg-line2" />
+              </div>
               {sheet}
             </div>
           </div>
