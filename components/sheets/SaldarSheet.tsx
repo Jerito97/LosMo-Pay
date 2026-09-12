@@ -65,13 +65,9 @@ export function SaldarSheet({
       <Button onClick={handleSubmit} disabled={pending}>
         {pending ? "Guardando…" : "Marcar como pagado"}
       </Button>
-      <button
-        type="button"
-        onClick={closeSheet}
-        className="cursor-pointer bg-transparent p-0.5 text-[12.5px] font-semibold text-muted"
-      >
+      <Button variant="secondary" onClick={closeSheet} disabled={pending}>
         Cancelar
-      </button>
+      </Button>
     </div>
   );
 }
