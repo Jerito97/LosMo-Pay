@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap");
 @import "tailwindcss";
 
 @custom-variant dark (&:where([data-theme="oscuro"], [data-theme="oscuro"] *));
@@ -60,7 +60,7 @@
   --color-knob: var(--knob);
   --color-brand-ink: var(--brand-ink);
 
-  --font-display: "Instrument Serif", Georgia, serif;
+  --font-display: "Archivo Black", "Archivo", system-ui, sans-serif;
   --font-sans: "Archivo", system-ui, sans-serif;
 }
 
