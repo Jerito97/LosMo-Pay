@@ -11,7 +11,7 @@ import {
 
 export interface NotificationItem {
   id: string;
-  type: "birthday" | "expense_added" | "payment_received" | "weekly_summary";
+  type: "birthday" | "expense_added" | "payment_received" | "weekly_summary" | "payment_reminder";
   title: string;
   body: string;
   createdAt: string;

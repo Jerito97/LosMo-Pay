@@ -9,6 +9,7 @@ const TYPE_TARGET: Record<NotificationItem["type"], string> = {
   expense_added: "/gastos",
   payment_received: "/gastos",
   weekly_summary: "/gastos",
+  payment_reminder: "/gastos",
 };
 
 const TYPE_TONE: Record<NotificationItem["type"], "a" | "b"> = {
@@ -16,6 +17,7 @@ const TYPE_TONE: Record<NotificationItem["type"], "a" | "b"> = {
   expense_added: "b",
   payment_received: "b",
   weekly_summary: "b",
+  payment_reminder: "a",
 };
 
 export function NotifDrawer() {

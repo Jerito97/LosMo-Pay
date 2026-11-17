@@ -118,7 +118,7 @@ export const notifications = pgTable("notifications", {
     .notNull()
     .references(() => users.id),
   type: text("type", {
-    enum: ["birthday", "expense_added", "payment_received", "weekly_summary"],
+    enum: ["birthday", "expense_added", "payment_received", "weekly_summary", "payment_reminder"],
   }).notNull(),
   title: text("title").notNull(),
   body: text("body").notNull(),
