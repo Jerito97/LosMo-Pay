@@ -24,8 +24,10 @@ export async function createExpense(input: {
     throw new Error("El monto tiene que ser mayor a cero");
   }
 
+  // No forzamos a que el payer esté entre los participantes: alguien puede
+  // haber puesto la plata sin formar parte del gasto (por ej. el tesorero
+  // comprando algo para el resto).
   const participantIds = [...new Set(input.participantIds)];
-  if (!participantIds.includes(input.payerId)) participantIds.push(input.payerId);
   if (participantIds.length === 0) throw new Error("Elegí al menos una persona");
 
   const expenseId = randomUUID();

@@ -24,7 +24,10 @@ export function CargarGastoForm({
   const [amount, setAmount] = useState("");
   const [payerId, setPayerId] = useState(meId);
   const [participantSearch, setParticipantSearch] = useState("");
-  const [selected, setSelected] = useState<string[]>(users.map((u) => u.id));
+  // Arranca solo con quien carga el gasto: la idea es sumar al resto después
+  // -a mano o compartiendo el link de invitación-, no tener a todo el grupo
+  // adentro por default.
+  const [selected, setSelected] = useState<string[]>([meId]);
   const [error, setError] = useState<string | null>(null);
 
   const filteredUsers = users.filter((u) =>
