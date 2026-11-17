@@ -10,6 +10,7 @@ import { PersonaCta } from "@/components/personas/PersonaCta";
 import { DeletePaymentButton } from "@/components/personas/DeletePaymentButton";
 import { DeletePersonButton } from "@/components/personas/DeletePersonButton";
 import { EditProfileButton } from "@/components/personas/EditProfileButton";
+import { ToggleAdminButton } from "@/components/personas/ToggleAdminButton";
 
 export default async function PersonaDetailPage({
   params,
@@ -106,7 +107,8 @@ export default async function PersonaDetailPage({
       {person.id !== me.id && <PersonaCta counterpartyId={person.id} amount={amount} />}
 
       {me.isAdmin && person.id !== me.id && (
-        <div className="mt-4">
+        <div className="mt-4 flex flex-col gap-2.5">
+          <ToggleAdminButton personId={person.id} isAdmin={person.isAdmin} />
           <DeletePersonButton personId={person.id} personName={person.username} />
         </div>
       )}

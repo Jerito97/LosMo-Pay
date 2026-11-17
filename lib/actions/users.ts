@@ -67,3 +67,15 @@ export async function deleteUser(userId: string) {
   revalidatePath("/inicio");
   revalidatePath("/fechas");
 }
+
+/** Dar o sacar el rol de admin a otra persona. Un admin no se puede tocar a sí mismo acá. */
+export async function setAdmin(userId: string, isAdmin: boolean) {
+  const me = await requireCurrentUser();
+  if (!me.isAdmin) throw new Error("Solo un admin puede dar o sacar el rol de admin");
+  if (userId === me.id) throw new Error("No te podés cambiar el rol de admin a vos mismo");
+
+  await db.update(users).set({ isAdmin }).where(eq(users.id, userId));
+
+  revalidatePath("/personas");
+  revalidatePath(`/personas/${userId}`);
+}
