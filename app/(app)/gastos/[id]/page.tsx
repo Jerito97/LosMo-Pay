@@ -11,6 +11,7 @@ import { JoinLeaveExpenseButton } from "@/components/gastos/JoinLeaveExpenseButt
 import { EditParticipantsButton } from "@/components/gastos/EditParticipantsButton";
 import { EditExpenseButton } from "@/components/gastos/EditExpenseButton";
 import { ShareExpenseButton } from "@/components/gastos/ShareExpenseButton";
+import { PayMyShareButton } from "@/components/gastos/PayMyShareButton";
 import { InviteJoinPrompt } from "@/components/gastos/InviteJoinPrompt";
 
 export default async function GastoDetailPage({
@@ -83,6 +84,12 @@ export default async function GastoDetailPage({
           {effect === 0 ? "—" : money(effect)}
         </div>
       </Card>
+
+      {effect < 0 && expense.payerId !== me.id && (
+        <div className="mt-3.5">
+          <PayMyShareButton payerId={expense.payerId} amount={Math.abs(effect)} />
+        </div>
+      )}
 
       <div className="mt-6 flex items-baseline justify-between gap-2.5 px-1">
         <span className="font-[family-name:var(--font-display)] text-[23px]">Participan</span>
