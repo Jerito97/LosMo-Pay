@@ -48,6 +48,9 @@ export default async function PersonaDetailPage({
           <span className="block font-[family-name:var(--font-display)] text-[30px] leading-tight">
             {person.username}
           </span>
+          {person.fullName && (
+            <span className="mt-0.5 block text-[12.5px] text-onwine2">{person.fullName}</span>
+          )}
           <span className="mt-1 block text-[12px] text-onwine2">
             Cumple el {formatBirthdayFull(person.birthday)} · en {days} días
           </span>
@@ -62,6 +65,7 @@ export default async function PersonaDetailPage({
       {person.id === me.id && (
         <div className="mt-4">
           <EditProfileButton
+            currentFullName={person.fullName}
             currentUsername={person.username}
             currentAlias={person.alias}
             currentBirthday={person.birthday}

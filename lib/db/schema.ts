@@ -29,6 +29,10 @@ export const users = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     username: text("username").notNull(),
+    // Nullable: las cuentas de antes de este campo no lo tienen todavía. El
+    // apodo (username) sigue siendo lo que se muestra en todos lados; el
+    // nombre completo solo aparece al entrar al perfil de esa persona.
+    fullName: text("full_name"),
     alias: text("alias").notNull(),
     // Nullable: el login viejo (usuario + PIN) queda como puente de
     // migración para cuentas que todavía no pasaron a mail + contraseña.

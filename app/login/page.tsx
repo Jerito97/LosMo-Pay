@@ -16,6 +16,7 @@ function LoginForm() {
   const migrarHref = `/migrar-cuenta?next=${encodeURIComponent(next)}`;
 
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [alias, setAlias] = useState("");
   const [birthday, setBirthday] = useState("");
@@ -51,13 +52,15 @@ function LoginForm() {
         body: JSON.stringify({
           email: email.trim(),
           password,
-          ...(isNewUser ? { username: username.trim(), alias: alias.trim(), birthday } : {}),
+          ...(isNewUser
+            ? { fullName: fullName.trim(), username: username.trim(), alias: alias.trim(), birthday }
+            : {}),
         }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Algo salió mal");
-        if (data.error?.includes("nombre, alias y cumpleaños")) setIsNewUser(true);
+        if (data.error?.includes("nombre completo, apodo, alias y cumpleaños")) setIsNewUser(true);
         return;
       }
       router.push(next);
@@ -91,7 +94,17 @@ function LoginForm() {
       {isNewUser && (
         <>
           <label className="mt-6 block">
-            <span className="text-[13.5px] font-semibold">Tu nombre</span>
+            <span className="text-[13.5px] font-semibold">Tu nombre completo</span>
+            <input
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Ignacio Pérez"
+              required
+              className="mt-2.5 block w-full rounded-xl border border-line bg-card p-3.5 text-[16px] font-medium text-ink outline-none"
+            />
+          </label>
+          <label className="mt-6 block">
+            <span className="text-[13.5px] font-semibold">Tu apodo</span>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}

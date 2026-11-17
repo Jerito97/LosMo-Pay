@@ -6,7 +6,14 @@ import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { hashPassword } from "@/lib/auth/password";
-import { aliasSchema, birthdaySchema, emailSchema, passwordSchema, usernameSchema } from "@/lib/auth/validation";
+import {
+  aliasSchema,
+  birthdaySchema,
+  emailSchema,
+  fullNameSchema,
+  passwordSchema,
+  usernameSchema,
+} from "@/lib/auth/validation";
 
 export async function setTheme(theme: "claro" | "oscuro") {
   const me = await requireCurrentUser();
@@ -21,8 +28,9 @@ export async function toggleNotifPref(key: "cumple" | "gasto" | "resumen") {
   revalidatePath("/config");
 }
 
-/** Editar mi propio perfil: nombre, alias, cumpleaños, mail y, si se completa, una contraseña nueva. */
+/** Editar mi propio perfil: nombre completo, apodo, alias, cumpleaños, mail y, si se completa, una contraseña nueva. */
 export async function updateProfile(input: {
+  fullName: string;
   username: string;
   alias: string;
   birthday: string;
@@ -31,6 +39,8 @@ export async function updateProfile(input: {
 }) {
   const me = await requireCurrentUser();
 
+  const fullName = fullNameSchema.safeParse(input.fullName);
+  if (!fullName.success) throw new Error(fullName.error.issues[0].message);
   const username = usernameSchema.safeParse(input.username);
   if (!username.success) throw new Error(username.error.issues[0].message);
   const alias = aliasSchema.safeParse(input.alias);
@@ -74,6 +84,7 @@ export async function updateProfile(input: {
     await db
       .update(users)
       .set({
+        fullName: fullName.data,
         username: username.data,
         alias: alias.data,
         birthday: birthday.data,

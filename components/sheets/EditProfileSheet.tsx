@@ -7,11 +7,13 @@ import { useSheet, useToast } from "@/components/providers/OverlayProvider";
 import { updateProfile } from "@/lib/actions/profile";
 
 export function EditProfileSheet({
+  currentFullName,
   currentUsername,
   currentAlias,
   currentBirthday,
   currentEmail,
 }: {
+  currentFullName: string | null;
   currentUsername: string;
   currentAlias: string;
   currentBirthday: string;
@@ -21,6 +23,7 @@ export function EditProfileSheet({
   const { closeSheet } = useSheet();
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
+  const [fullName, setFullName] = useState(currentFullName ?? "");
   const [username, setUsername] = useState(currentUsername);
   const [alias, setAlias] = useState(currentAlias);
   const [birthday, setBirthday] = useState(currentBirthday);
@@ -33,6 +36,7 @@ export function EditProfileSheet({
     startTransition(async () => {
       try {
         await updateProfile({
+          fullName,
           username,
           alias,
           birthday,
@@ -54,11 +58,23 @@ export function EditProfileSheet({
         <div className="font-[family-name:var(--font-display)] text-[27px] leading-tight">
           Editar mi perfil
         </div>
-        <div className="mt-1.5 text-[12px] text-muted">Tu nombre, alias, cumpleaños, mail y contraseña</div>
+        <div className="mt-1.5 text-[12px] text-muted">
+          Tu nombre completo, apodo, alias, cumpleaños, mail y contraseña
+        </div>
       </div>
 
       <label className="flex flex-col gap-2">
-        <span className="text-[13.5px] font-semibold">Tu nombre</span>
+        <span className="text-[13.5px] font-semibold">Tu nombre completo</span>
+        <input
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Ignacio Pérez"
+          className="w-full rounded-xl border border-line bg-card p-3.5 text-[15.5px] font-medium text-ink outline-none"
+        />
+      </label>
+
+      <label className="flex flex-col gap-2">
+        <span className="text-[13.5px] font-semibold">Tu apodo</span>
         <input
           value={username}
           onChange={(e) => setUsername(e.target.value)}

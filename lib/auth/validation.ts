@@ -7,6 +7,13 @@ export const usernameSchema = z
   .max(30, "Máximo 30 caracteres")
   .regex(/^[\p{L}0-9 ._-]+$/u, "Usá letras, números, espacios, puntos o guiones");
 
+export const fullNameSchema = z
+  .string()
+  .trim()
+  .min(2, "Mínimo 2 caracteres")
+  .max(60, "Máximo 60 caracteres")
+  .regex(/^[\p{L} .'-]+$/u, "Usá letras y espacios");
+
 export const aliasSchema = z
   .string()
   .trim()
@@ -45,6 +52,7 @@ export const emailLoginSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   username: usernameSchema.optional(),
+  fullName: fullNameSchema.optional(),
   alias: aliasSchema.optional(),
   birthday: birthdaySchema.optional(),
 });

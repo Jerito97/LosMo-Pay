@@ -138,7 +138,11 @@ export default async function GastoDetailPage({
         ) : (
           <JoinLeaveExpenseButton expenseId={expense.id} isParticipant={iParticipate} />
         )}
-        <ShareExpenseButton expenseId={expense.id} />
+        <ShareExpenseButton
+          expenseId={expense.id}
+          description={expense.description}
+          amount={expense.amount}
+        />
       </div>
 
       {invite === "1" && !iParticipate && (

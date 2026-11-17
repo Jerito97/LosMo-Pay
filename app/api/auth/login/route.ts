@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
-  const { email, password, username, alias, birthday } = parsed.data;
+  const { email, password, username, fullName, alias, birthday } = parsed.data;
 
   const existing = await db.query.users.findFirst({
     where: sql`lower(${users.email}) = lower(${email})`,
@@ -41,10 +41,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ created: false, userId: existing.id });
   }
 
-  // Mail nuevo: nombre, alias y cumpleaños son obligatorios para crear la cuenta.
-  if (!username || !alias || !birthday) {
+  // Mail nuevo: nombre completo, apodo, alias y cumpleaños son obligatorios para crear la cuenta.
+  if (!username || !fullName || !alias || !birthday) {
     return NextResponse.json(
-      { error: "Para crear tu cuenta necesitamos tu nombre, alias y cumpleaños" },
+      { error: "Para crear tu cuenta necesitamos tu nombre completo, apodo, alias y cumpleaños" },
       { status: 400 },
     );
   }
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
   try {
     [created] = await db
       .insert(users)
-      .values({ username, alias, birthday, email, passwordHash })
+      .values({ username, fullName, alias, birthday, email, passwordHash })
       .returning({ id: users.id });
   } catch (error) {
     // Otra persona se registró con el mismo mail, nombre o alias en
