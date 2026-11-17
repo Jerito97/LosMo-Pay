@@ -17,6 +17,7 @@ export async function proxy(request: NextRequest) {
     try {
       const data = await unsealData<SessionData>(cookie, {
         password: getSessionOptions().password,
+        ttl: 0,
       });
       userId = data.userId;
     } catch {
@@ -29,7 +30,10 @@ export async function proxy(request: NextRequest) {
 
   if (!userId && !isPublicAuthRoute) {
     const url = request.nextUrl.clone();
+    const next = url.pathname + url.search;
     url.pathname = "/login";
+    url.search = "";
+    url.searchParams.set("next", next);
     return NextResponse.redirect(url);
   }
 

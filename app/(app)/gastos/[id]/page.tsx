@@ -10,13 +10,18 @@ import { DeleteExpenseButton } from "@/components/gastos/DeleteExpenseButton";
 import { JoinLeaveExpenseButton } from "@/components/gastos/JoinLeaveExpenseButton";
 import { EditParticipantsButton } from "@/components/gastos/EditParticipantsButton";
 import { EditExpenseButton } from "@/components/gastos/EditExpenseButton";
+import { ShareExpenseButton } from "@/components/gastos/ShareExpenseButton";
+import { InviteJoinPrompt } from "@/components/gastos/InviteJoinPrompt";
 
 export default async function GastoDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ invite?: string }>;
 }) {
   const { id } = await params;
+  const { invite } = await searchParams;
   const me = await requireCurrentUser();
   const [users, expenses] = await Promise.all([getAllUsers(), getExpensesWithParticipants()]);
 
@@ -133,7 +138,16 @@ export default async function GastoDetailPage({
         ) : (
           <JoinLeaveExpenseButton expenseId={expense.id} isParticipant={iParticipate} />
         )}
+        <ShareExpenseButton expenseId={expense.id} />
       </div>
+
+      {invite === "1" && !iParticipate && (
+        <InviteJoinPrompt
+          expenseId={expense.id}
+          description={expense.description}
+          amount={expense.amount}
+        />
+      )}
     </div>
   );
 }

@@ -27,11 +27,17 @@ export function getSessionOptions(): SessionOptions {
   return {
     password: requireSessionSecret(),
     cookieName: sessionCookieName,
+    // `ttl: 0` le dice a iron-session que no selle una expiración dentro de
+    // la cookie: sin esto, por defecto usa 14 días *aunque* cookieOptions.
+    // maxAge diga otra cosa, y la sesión queda "vencida" del lado del
+    // servidor bastante antes de que el navegador borre la cookie -el bug
+    // real detrás de los desloguéos inesperados.
+    ttl: 0,
     cookieOptions: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 180, // 180 días
+      maxAge: 60 * 60 * 24 * 365 * 2, // 2 años: de ahora en más, solo se cierra la sesión si uno lo pide
     },
   };
 }

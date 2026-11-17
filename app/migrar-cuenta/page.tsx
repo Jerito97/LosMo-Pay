@@ -1,11 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState, type FormEvent } from "react";
 
-export default function MigrarCuentaPage() {
+/** Evita open-redirect: solo rutas relativas propias, nunca otro origen. */
+function safeNext(next: string | null): string {
+  if (next && next.startsWith("/") && !next.startsWith("//")) return next;
+  return "/inicio";
+}
+
+function MigrarCuentaForm() {
   const router = useRouter();
+  const next = safeNext(useSearchParams().get("next"));
   const [username, setUsername] = useState("");
   const [pin, setPin] = useState("");
   const [email, setEmail] = useState("");
@@ -28,7 +35,7 @@ export default function MigrarCuentaPage() {
         setError(data.error ?? "Algo salió mal");
         return;
       }
-      router.push("/inicio");
+      router.push(next);
       router.refresh();
     } catch {
       setError("No pudimos conectarnos. Probá de nuevo.");
@@ -38,21 +45,7 @@ export default function MigrarCuentaPage() {
   }
 
   return (
-    <div className="flex min-h-dvh justify-center bg-desk">
-      <div className="flex min-h-dvh w-full max-w-[430px] flex-col bg-paper text-ink">
-        <div className="flex-none bg-wine px-[26px] pt-[62px] pb-[26px] text-onwine">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo-losmo-pay.png"
-            alt="LosMo Pay"
-            width={88}
-            height={88}
-            className="block rounded-2xl"
-          />
-          <div className="mt-3.5 h-px bg-[rgba(247,233,228,0.32)]" />
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-[26px] py-[22px]">
+    <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-[26px] py-[22px]">
           <h1 className="font-[family-name:var(--font-display)] text-[27px] leading-tight">
             Migrar mi cuenta vieja
           </h1>
@@ -131,7 +124,28 @@ export default function MigrarCuentaPage() {
           >
             Volver a entrar
           </Link>
-        </form>
+    </form>
+  );
+}
+
+export default function MigrarCuentaPage() {
+  return (
+    <div className="flex min-h-dvh justify-center bg-desk">
+      <div className="flex min-h-dvh w-full max-w-[430px] flex-col bg-paper text-ink">
+        <div className="flex-none bg-wine px-[26px] pt-[62px] pb-[26px] text-onwine">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo-losmo-pay.png"
+            alt="LosMo Pay"
+            width={88}
+            height={88}
+            className="block rounded-2xl"
+          />
+          <div className="mt-3.5 h-px bg-[rgba(247,233,228,0.32)]" />
+        </div>
+        <Suspense fallback={null}>
+          <MigrarCuentaForm />
+        </Suspense>
       </div>
     </div>
   );
