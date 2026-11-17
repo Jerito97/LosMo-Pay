@@ -1,6 +1,8 @@
 import { inArray } from "drizzle-orm";
+import { after } from "next/server";
 import { db } from "@/lib/db/client";
 import { notifications, users, type NewNotification } from "@/lib/db/schema";
+import { sendPushToUsers } from "@/lib/push";
 
 type NotifType = NewNotification["type"];
 
@@ -8,6 +10,11 @@ function prefKeyForType(type: NotifType): "cumple" | "gasto" | "resumen" {
   if (type === "birthday") return "cumple";
   if (type === "weekly_summary") return "resumen";
   return "gasto";
+}
+
+function urlForType(type: NotifType): string {
+  if (type === "birthday") return "/fechas";
+  return "/gastos";
 }
 
 export async function notifyUsers(
@@ -42,5 +49,9 @@ export async function notifyUsers(
 
   if (rows.length) {
     await db.insert(notifications).values(rows);
+    // El push se manda después de responder: una notificación lenta o un
+    // endpoint caído nunca debe hacer esperar al usuario que cargó el gasto.
+    const recipientIds = rows.map((row) => row.userId);
+    after(() => sendPushToUsers(recipientIds, { title: notif.title, body: notif.body, url: urlForType(notif.type) }));
   }
 }

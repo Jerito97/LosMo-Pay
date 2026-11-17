@@ -1,6 +1,7 @@
 import { requireCurrentUser } from "@/lib/auth/session";
 import { formatBirthdayFull, initials } from "@/lib/format";
 import { ConfigToggles } from "@/components/config/ConfigToggles";
+import { PushOptIn } from "@/components/push/PushOptIn";
 import { LogoutButton } from "@/components/config/LogoutButton";
 
 export default async function ConfigPage() {
@@ -27,6 +28,8 @@ export default async function ConfigPage() {
       </div>
 
       <ConfigToggles prefs={prefs} theme={theme} />
+
+      <PushOptIn />
 
       <LogoutButton />
     </div>
