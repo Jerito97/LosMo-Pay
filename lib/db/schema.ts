@@ -30,7 +30,13 @@ export const users = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     username: text("username").notNull(),
     alias: text("alias").notNull(),
-    pinHash: text("pin_hash").notNull(),
+    // Nullable: el login viejo (usuario + PIN) queda como puente de
+    // migración para cuentas que todavía no pasaron a mail + contraseña.
+    pinHash: text("pin_hash"),
+    email: text("email"),
+    passwordHash: text("password_hash"),
+    resetTokenHash: text("reset_token_hash"),
+    resetTokenExpiresAt: timestamp("reset_token_expires_at", { withTimezone: true }),
     birthday: date("birthday", { mode: "string" }).notNull(),
     isAdmin: boolean("is_admin").notNull().default(false),
     themePref: text("theme_pref").notNull().default("claro"),
@@ -45,6 +51,7 @@ export const users = pgTable(
   (table) => [
     uniqueIndex("users_username_lower_idx").on(sql`lower(${table.username})`),
     uniqueIndex("users_alias_lower_idx").on(sql`lower(${table.alias})`),
+    uniqueIndex("users_email_lower_idx").on(sql`lower(${table.email})`),
   ],
 );
 

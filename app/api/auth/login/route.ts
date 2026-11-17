@@ -2,29 +2,38 @@ import { NextRequest, NextResponse } from "next/server";
 import { sql } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema";
-import { hashPin, verifyPin } from "@/lib/auth/pin";
+import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { getSession } from "@/lib/auth/session";
-import { loginSchema } from "@/lib/auth/validation";
+import { emailLoginSchema } from "@/lib/auth/validation";
 
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
-  const parsed = loginSchema.safeParse(body);
+  const parsed = emailLoginSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: parsed.error.issues[0]?.message ?? "Datos inválidos" },
       { status: 400 },
     );
   }
-  const { username, pin, alias, birthday } = parsed.data;
+  const { email, password, username, alias, birthday } = parsed.data;
 
   const existing = await db.query.users.findFirst({
-    where: sql`lower(${users.username}) = lower(${username})`,
+    where: sql`lower(${users.email}) = lower(${email})`,
   });
 
   if (existing) {
-    const valid = await verifyPin(pin, existing.pinHash);
+    if (!existing.passwordHash) {
+      return NextResponse.json(
+        {
+          error:
+            "Esta cuenta todavía usa usuario y PIN. Migrala a mail y contraseña desde el link de abajo.",
+        },
+        { status: 409 },
+      );
+    }
+    const valid = await verifyPassword(password, existing.passwordHash);
     if (!valid) {
-      return NextResponse.json({ error: "PIN incorrecto" }, { status: 401 });
+      return NextResponse.json({ error: "Contraseña incorrecta" }, { status: 401 });
     }
     const session = await getSession();
     session.userId = existing.id;
@@ -32,14 +41,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ created: false, userId: existing.id });
   }
 
-  // Usuario nuevo: alias y cumpleaños son obligatorios.
-  if (!alias || !birthday) {
+  // Mail nuevo: nombre, alias y cumpleaños son obligatorios para crear la cuenta.
+  if (!username || !alias || !birthday) {
     return NextResponse.json(
-      { error: "Para crear tu cuenta necesitamos tu alias y tu cumpleaños" },
+      { error: "Para crear tu cuenta necesitamos tu nombre, alias y cumpleaños" },
       { status: 400 },
     );
   }
 
+  const usernameTaken = await db.query.users.findFirst({
+    where: sql`lower(${users.username}) = lower(${username})`,
+    columns: { id: true },
+  });
+  if (usernameTaken) {
+    return NextResponse.json(
+      { error: "Ese nombre ya está en uso por otra persona del grupo" },
+      { status: 409 },
+    );
+  }
   const aliasTaken = await db.query.users.findFirst({
     where: sql`lower(${users.alias}) = lower(${alias})`,
     columns: { id: true },
@@ -51,19 +70,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const pinHash = await hashPin(pin);
+  const passwordHash = await hashPassword(password);
   let created: { id: string };
   try {
     [created] = await db
       .insert(users)
-      .values({ username, alias, birthday, pinHash })
+      .values({ username, alias, birthday, email, passwordHash })
       .returning({ id: users.id });
   } catch (error) {
-    // Otra persona se registró con el mismo nombre de usuario o alias en
+    // Otra persona se registró con el mismo mail, nombre o alias en
     // paralelo: los índices únicos de la base ganan la carrera.
     if (isUniqueViolation(error)) {
       return NextResponse.json(
-        { error: "Ese nombre de usuario o alias se acaba de ocupar. Probá con otro." },
+        { error: "Ese mail, nombre o alias se acaba de ocupar. Probá de nuevo." },
         { status: 409 },
       );
     }

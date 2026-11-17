@@ -10,10 +10,12 @@ export function EditProfileSheet({
   currentUsername,
   currentAlias,
   currentBirthday,
+  currentEmail,
 }: {
   currentUsername: string;
   currentAlias: string;
   currentBirthday: string;
+  currentEmail: string | null;
 }) {
   const router = useRouter();
   const { closeSheet } = useSheet();
@@ -22,7 +24,8 @@ export function EditProfileSheet({
   const [username, setUsername] = useState(currentUsername);
   const [alias, setAlias] = useState(currentAlias);
   const [birthday, setBirthday] = useState(currentBirthday);
-  const [newPin, setNewPin] = useState("");
+  const [email, setEmail] = useState(currentEmail ?? "");
+  const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   function handleSubmit() {
@@ -33,7 +36,8 @@ export function EditProfileSheet({
           username,
           alias,
           birthday,
-          newPin: newPin || undefined,
+          newEmail: email !== (currentEmail ?? "") ? email : undefined,
+          newPassword: newPassword || undefined,
         });
         closeSheet();
         showToast("Perfil actualizado");
@@ -50,7 +54,7 @@ export function EditProfileSheet({
         <div className="font-[family-name:var(--font-display)] text-[27px] leading-tight">
           Editar mi perfil
         </div>
-        <div className="mt-1.5 text-[12px] text-muted">Tu nombre, alias, cumpleaños y PIN</div>
+        <div className="mt-1.5 text-[12px] text-muted">Tu nombre, alias, cumpleaños, mail y contraseña</div>
       </div>
 
       <label className="flex flex-col gap-2">
@@ -84,14 +88,24 @@ export function EditProfileSheet({
       </label>
 
       <label className="flex flex-col gap-2">
-        <span className="text-[13.5px] font-semibold">Nuevo PIN (opcional)</span>
+        <span className="text-[13.5px] font-semibold">Tu mail</span>
         <input
-          value={newPin}
-          onChange={(e) => setNewPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
-          inputMode="numeric"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          type="email"
+          placeholder="nacho@mail.com"
+          className="w-full rounded-xl border border-line bg-card p-3.5 text-[15.5px] font-medium text-ink outline-none"
+        />
+      </label>
+
+      <label className="flex flex-col gap-2">
+        <span className="text-[13.5px] font-semibold">Nueva contraseña (opcional)</span>
+        <input
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
           type="password"
-          placeholder="Dejalo vacío para no cambiarlo"
-          className="w-full rounded-xl border border-line bg-card p-3.5 text-[15.5px] font-medium tracking-[0.2em] text-ink outline-none"
+          placeholder="Dejalo vacío para no cambiarla"
+          className="w-full rounded-xl border border-line bg-card p-3.5 text-[15.5px] font-medium text-ink outline-none"
         />
       </label>
 

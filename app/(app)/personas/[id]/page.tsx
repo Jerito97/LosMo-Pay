@@ -65,6 +65,7 @@ export default async function PersonaDetailPage({
             currentUsername={person.username}
             currentAlias={person.alias}
             currentBirthday={person.birthday}
+            currentEmail={person.email}
           />
         </div>
       )}

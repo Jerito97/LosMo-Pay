@@ -1,25 +1,27 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [alias, setAlias] = useState("");
   const [birthday, setBirthday] = useState("");
-  const [pin, setPin] = useState("");
+  const [password, setPassword] = useState("");
   const [isNewUser, setIsNewUser] = useState(false);
   const [checking, setChecking] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function checkUsername() {
-    const trimmed = username.trim();
+  async function checkEmail() {
+    const trimmed = email.trim();
     if (!trimmed) return;
     setChecking(true);
     try {
-      const res = await fetch(`/api/auth/check-username?username=${encodeURIComponent(trimmed)}`);
+      const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(trimmed)}`);
       const data = await res.json();
       setIsNewUser(!data.exists);
     } catch {
@@ -38,15 +40,15 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: username.trim(),
-          pin,
-          ...(isNewUser ? { alias: alias.trim(), birthday } : {}),
+          email: email.trim(),
+          password,
+          ...(isNewUser ? { username: username.trim(), alias: alias.trim(), birthday } : {}),
         }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Algo salió mal");
-        if (data.error?.includes("alias y tu cumpleaños")) setIsNewUser(true);
+        if (data.error?.includes("nombre, alias y cumpleaños")) setIsNewUser(true);
         return;
       }
       router.push("/inicio");
@@ -57,8 +59,6 @@ export default function LoginPage() {
       setSubmitting(false);
     }
   }
-
-  const pinDigits = pin.length;
 
   return (
     <div className="flex min-h-dvh justify-center bg-desk">
@@ -77,16 +77,17 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-[26px] py-[22px]">
           <label className="block">
-            <span className="text-[13.5px] font-semibold">Tu nombre</span>
+            <span className="text-[13.5px] font-semibold">Tu mail</span>
             <input
-              value={username}
+              value={email}
               onChange={(e) => {
-                setUsername(e.target.value);
+                setEmail(e.target.value);
                 setError(null);
               }}
-              onBlur={checkUsername}
-              placeholder="Nacho"
-              autoComplete="username"
+              onBlur={checkEmail}
+              type="email"
+              placeholder="nacho@mail.com"
+              autoComplete="email"
               required
               className="mt-2.5 block w-full rounded-xl border border-line bg-card p-3.5 text-[16px] font-medium text-ink outline-none"
             />
@@ -94,6 +95,16 @@ export default function LoginPage() {
 
           {isNewUser && (
             <>
+              <label className="mt-6 block">
+                <span className="text-[13.5px] font-semibold">Tu nombre</span>
+                <input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Nacho"
+                  required
+                  className="mt-2.5 block w-full rounded-xl border border-line bg-card p-3.5 text-[16px] font-medium text-ink outline-none"
+                />
+              </label>
               <label className="mt-6 block">
                 <span className="text-[13.5px] font-semibold">Alias para que te transfieran</span>
                 <input
@@ -118,24 +129,41 @@ export default function LoginPage() {
           )}
 
           <div className="mt-6 flex items-baseline justify-between">
-            <span className="text-[13.5px] font-semibold">PIN</span>
-            <span className="text-[11px] font-semibold text-faint">{pinDigits} de 4 a 6</span>
+            <span className="text-[13.5px] font-semibold">Contraseña</span>
+            {!isNewUser && (
+              <Link href="/forgot-password" className="text-[11.5px] font-semibold text-accent">
+                ¿La olvidaste?
+              </Link>
+            )}
           </div>
           <input
-            value={pin}
-            onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
-            inputMode="numeric"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             type="password"
-            placeholder="••••••"
+            placeholder="••••••••"
+            autoComplete={isNewUser ? "new-password" : "current-password"}
             required
-            className="mt-2.5 block w-full rounded-xl border border-line bg-card p-3.5 text-[24px] font-semibold tracking-[0.34em] text-ink outline-none"
+            minLength={8}
+            className="mt-2.5 block w-full rounded-xl border border-line bg-card p-3.5 text-[16px] font-medium text-ink outline-none"
           />
 
-          {error && <div className="mt-4 text-[13px] font-medium text-rose">{error}</div>}
+          {error && (
+            <div className="mt-4 text-[13px] font-medium text-rose">
+              {error}
+              {error.includes("usuario y PIN") && (
+                <>
+                  {" "}
+                  <Link href="/migrar-cuenta" className="underline">
+                    Migrar mi cuenta vieja
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
 
           <button
             type="submit"
-            disabled={submitting || checking || pin.length < 4}
+            disabled={submitting || checking || password.length < 8}
             className="mt-6 w-full cursor-pointer rounded-2xl bg-wine px-4 py-[17px] text-[15px] font-semibold text-onwine disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? "Entrando…" : "Entrar"}
@@ -143,9 +171,16 @@ export default function LoginPage() {
 
           {isNewUser && (
             <p className="mt-4 text-center text-[12px] text-muted">
-              No encontramos ese nombre en el grupo: vamos a crear tu cuenta.
+              No encontramos ese mail en el grupo: vamos a crear tu cuenta.
             </p>
           )}
+
+          <Link
+            href="/migrar-cuenta"
+            className="mt-5 block text-center text-[12px] font-semibold text-accent"
+          >
+            ¿Tenés una cuenta vieja con usuario y PIN?
+          </Link>
         </form>
       </div>
     </div>

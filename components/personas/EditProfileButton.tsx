@@ -8,10 +8,12 @@ export function EditProfileButton({
   currentUsername,
   currentAlias,
   currentBirthday,
+  currentEmail,
 }: {
   currentUsername: string;
   currentAlias: string;
   currentBirthday: string;
+  currentEmail: string | null;
 }) {
   const { openSheet } = useSheet();
 
@@ -24,6 +26,7 @@ export function EditProfileButton({
             currentUsername={currentUsername}
             currentAlias={currentAlias}
             currentBirthday={currentBirthday}
+            currentEmail={currentEmail}
           />,
         )
       }

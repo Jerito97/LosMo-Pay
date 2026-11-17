@@ -22,6 +22,13 @@
       "when": 1789229244528,
       "tag": "0002_useful_morg",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794930530401,
+      "tag": "0003_milky_zeigeist",
+      "breakpoints": true
     }
   ]
 }

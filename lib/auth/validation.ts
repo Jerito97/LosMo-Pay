@@ -18,6 +18,18 @@ export const pinSchema = z
   .string()
   .regex(/^\d{4,6}$/, "El PIN debe tener de 4 a 6 dígitos");
 
+export const emailSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .email("Poné un mail válido")
+  .max(254, "Máximo 254 caracteres");
+
+export const passwordSchema = z
+  .string()
+  .min(8, "Mínimo 8 caracteres")
+  .max(72, "Máximo 72 caracteres");
+
 export const birthdaySchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Fecha inválida")
@@ -29,9 +41,27 @@ export const birthdaySchema = z
     return date.getUTCFullYear() >= minYear && date.getTime() <= now.getTime();
   }, "Tiene que ser una fecha real, no futura");
 
-export const loginSchema = z.object({
-  username: usernameSchema,
-  pin: pinSchema,
+export const emailLoginSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+  username: usernameSchema.optional(),
   alias: aliasSchema.optional(),
   birthday: birthdaySchema.optional(),
+});
+
+export const migrateLegacySchema = z.object({
+  username: usernameSchema,
+  pin: pinSchema,
+  email: emailSchema,
+  password: passwordSchema,
+});
+
+export const forgotPasswordSchema = z.object({
+  email: emailSchema,
+});
+
+export const resetPasswordSchema = z.object({
+  email: emailSchema,
+  token: z.string().min(1, "Falta el token"),
+  password: passwordSchema,
 });
