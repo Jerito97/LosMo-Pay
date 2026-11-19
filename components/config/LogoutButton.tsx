@@ -15,7 +15,7 @@ export function LogoutButton() {
 
   return (
     <div className="mt-6.5">
-      <Button variant="danger-outline" onClick={handleClick}>
+      <Button variant="secondary" onClick={handleClick}>
         Salir de la sesión
       </Button>
     </div>

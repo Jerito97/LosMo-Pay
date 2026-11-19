@@ -140,7 +140,6 @@ export default async function GastoDetailPage({
               users={users.map((u) => ({ id: u.id, username: u.username }))}
               currentParticipantIds={expense.participantIds}
             />
-            <DeleteExpenseButton expenseId={expense.id} />
           </>
         ) : (
           <JoinLeaveExpenseButton expenseId={expense.id} isParticipant={iParticipate} />
@@ -150,6 +149,7 @@ export default async function GastoDetailPage({
           description={expense.description}
           amount={expense.amount}
         />
+        {canManage && <DeleteExpenseButton expenseId={expense.id} />}
       </div>
 
       {invite === "1" && !iParticipate && (

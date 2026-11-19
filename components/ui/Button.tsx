@@ -1,11 +1,12 @@
 import type { ButtonHTMLAttributes } from "react";
 
-type Variant = "primary" | "secondary" | "danger-outline";
+type Variant = "primary" | "secondary" | "danger-outline" | "success-outline";
 
 const variantClasses: Record<Variant, string> = {
   primary: "bg-wine text-onwine",
   secondary: "bg-card border border-line text-ink",
-  "danger-outline": "bg-card border border-line text-accent",
+  "danger-outline": "bg-card border-[1.5px] border-rose text-rose",
+  "success-outline": "bg-card border-[1.5px] border-success text-success",
 };
 
 export function Button({

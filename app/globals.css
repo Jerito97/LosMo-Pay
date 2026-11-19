@@ -20,6 +20,7 @@
   --onwine3: #d9a9a4;
   --rose: #a83243;
   --rose2: #c94e5e;
+  --success: #2f7d52;
   --knob: #c3b0a4;
   --brand-ink: #4a0e1a;
 }
@@ -37,6 +38,7 @@
   --accent: #e2c8cd;
   --rose: #c94e5e;
   --rose2: #d9707c;
+  --success: #7fd1a8;
   --knob: #7d5c58;
   --brand-ink: #f4e9e4;
 }
@@ -58,6 +60,7 @@
     --accent: #e2c8cd;
     --rose: #c94e5e;
     --rose2: #d9707c;
+    --success: #7fd1a8;
     --knob: #7d5c58;
     --brand-ink: #f4e9e4;
   }
@@ -79,6 +82,7 @@
   --color-onwine3: var(--onwine3);
   --color-rose: var(--rose);
   --color-rose2: var(--rose2);
+  --color-success: var(--success);
   --color-knob: var(--knob);
   --color-brand-ink: var(--brand-ink);
 
