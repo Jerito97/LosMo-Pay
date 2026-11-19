@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { WineCard } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
-import { money, signedMoney } from "@/lib/format";
+import { balanceFontSizeClass, money, signedMoney } from "@/lib/format";
 
 export interface BalanceBar {
   userId: string;
@@ -13,6 +13,7 @@ export interface BalanceBar {
 
 export function GastosBalanceCard({ net, bars }: { net: number; bars: BalanceBar[] }) {
   const [open, setOpen] = useState(false);
+  const netLabel = net === 0 ? "Al día" : signedMoney(net);
 
   return (
     <WineCard>
@@ -30,10 +31,12 @@ export function GastosBalanceCard({ net, bars }: { net: number; bars: BalanceBar
           </span>
         </span>
         <span className="mt-1.5 flex items-end justify-between gap-2.5">
-          <span className="font-[family-name:var(--font-display)] text-[46px] leading-[0.95]">
-            {net === 0 ? "Al día" : signedMoney(net)}
+          <span
+            className={`font-[family-name:var(--font-display)] ${balanceFontSizeClass(netLabel)} leading-[0.95] whitespace-nowrap`}
+          >
+            {netLabel}
           </span>
-          <span className="flex items-center gap-1.5 pb-1.5 text-[11px] font-bold tracking-wide text-onwine3 uppercase">
+          <span className="flex flex-none items-center gap-1.5 pb-1.5 text-[11px] font-bold tracking-wide whitespace-nowrap text-onwine3 uppercase">
             {open ? "Ocultar" : "Quién debe"}
             <span
               className="text-[13px] transition-transform"

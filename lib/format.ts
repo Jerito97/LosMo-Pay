@@ -17,6 +17,21 @@ export function isZeroMoney(amount: number): boolean {
   return Math.round(Math.abs(amount)) === 0;
 }
 
+// El saldo grande de Inicio/Gastos usa una tipografía enorme a tamaño fijo:
+// con un monto de pocos dígitos entra bien, pero uno de 6+ cifras (alguien
+// puede llegar a deber $100.000 y pico) no entra en el ancho disponible y el
+// signo queda solo en su propia línea. Achicamos la letra según la cantidad
+// de caracteres del texto ya formateado, para que siempre entre en una sola
+// línea sin tener que medir el layout en el navegador.
+export function balanceFontSizeClass(formatted: string): string {
+  const len = formatted.length;
+  if (len <= 7) return "text-[46px]";
+  if (len === 8) return "text-[40px]";
+  if (len === 9) return "text-[35px]";
+  if (len === 10) return "text-[31px]";
+  return "text-[27px]";
+}
+
 export function initials(name: string): string {
   return name
     .trim()

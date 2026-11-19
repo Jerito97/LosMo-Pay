@@ -3,7 +3,7 @@ import { requireCurrentUser } from "@/lib/auth/session";
 import { getAllUsers, getExpensesWithParticipants, getPayments } from "@/lib/data/queries";
 import { computeBalances, netTotal } from "@/lib/balances";
 import { daysUntilNextBirthday, ageTurning } from "@/lib/dates";
-import { formatBirthdayShort, initials, signedMoney, todayLabel } from "@/lib/format";
+import { balanceFontSizeClass, formatBirthdayShort, initials, signedMoney, todayLabel } from "@/lib/format";
 import { InicioHeaderActions } from "@/components/inicio/InicioHeaderActions";
 import { InicioFeed } from "@/components/inicio/InicioFeed";
 import { WineCard } from "@/components/ui/Card";
@@ -18,6 +18,7 @@ export default async function InicioPage() {
 
   const balance = computeBalances(me.id, expenses, payments);
   const net = netTotal(balance);
+  const netLabel = net === 0 ? "Al día" : signedMoney(net);
 
   const withDays = users.map((u) => ({
     ...u,
@@ -67,10 +68,12 @@ export default async function InicioPage() {
             </span>
           </span>
           <span className="mt-1.5 flex items-end justify-between gap-2.5">
-            <span className="font-[family-name:var(--font-display)] text-[46px] leading-[0.95]">
-              {net === 0 ? "Al día" : signedMoney(net)}
+            <span
+              className={`font-[family-name:var(--font-display)] ${balanceFontSizeClass(netLabel)} leading-[0.95] whitespace-nowrap`}
+            >
+              {netLabel}
             </span>
-            <span className="pb-1.5 text-[16px] text-onwine3">→</span>
+            <span className="flex-none pb-1.5 text-[16px] text-onwine3">→</span>
           </span>
         </WineCard>
       </Link>
