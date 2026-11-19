@@ -6,9 +6,16 @@ import { sendPushToUsers } from "@/lib/push";
 
 type NotifType = NewNotification["type"];
 
-function prefKeyForType(type: NotifType): "cumple" | "gasto" | "resumen" {
+/**
+ * El recordatorio de pago (payment_reminder) no tiene toggle: devuelve null
+ * a propósito para que nunca se filtre. La idea es que nadie se atrase en
+ * pagar porque lo desactivó sin querer -el resto de los avisos sí se puede
+ * prender y apagar desde Ajustes.
+ */
+function prefKeyForType(type: NotifType): "cumple" | "gasto" | "resumen" | null {
   if (type === "birthday") return "cumple";
   if (type === "weekly_summary") return "resumen";
+  if (type === "payment_reminder") return null;
   return "gasto";
 }
 
@@ -37,7 +44,7 @@ export async function notifyUsers(
 
   const prefKey = prefKeyForType(notif.type);
   const rows = recipients
-    .filter((user) => user.notifPrefs[prefKey] !== false)
+    .filter((user) => prefKey === null || user.notifPrefs[prefKey] !== false)
     .map((user) => ({
       userId: user.id,
       type: notif.type,

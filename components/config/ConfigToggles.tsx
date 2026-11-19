@@ -42,6 +42,17 @@ export function ConfigToggles({ prefs, theme }: { prefs: Prefs; theme: "claro" |
         Avisos
       </div>
       <div className="mt-2.5 flex flex-col gap-2.5">
+        <div className="flex w-full items-center gap-3.5 rounded-2xl border border-line bg-card p-3.5 text-left shadow-[0_2px_8px_rgba(43,16,21,0.04)]">
+          <span className="min-w-0 flex-1">
+            <span className="block text-[14.5px] font-semibold">Recordatorio de pago</span>
+            <span className="mt-0.5 block text-[11.5px] text-muted">
+              A los 3 días de un gasto sin pagar, y cada 3 días más. No se puede desactivar.
+            </span>
+          </span>
+          <span className="flex-none rounded-full border border-line2 px-2.5 py-1 text-[10px] font-bold tracking-wide text-accent uppercase">
+            Siempre
+          </span>
+        </div>
         {ROWS.map((row) => (
           <button
             key={row.key}
