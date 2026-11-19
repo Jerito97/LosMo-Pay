@@ -37,7 +37,7 @@ export function ShareExpenseButton({
   }
 
   return (
-    <Button variant="success-outline" onClick={handleShare}>
+    <Button variant="success" onClick={handleShare}>
       Compartir / invitar
     </Button>
   );

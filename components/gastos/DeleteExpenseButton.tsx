@@ -28,7 +28,7 @@ export function DeleteExpenseButton({ expenseId }: { expenseId: string }) {
 
   return (
     <div>
-      <Button variant="danger-outline" onClick={handleClick} disabled={pending}>
+      <Button variant="danger" onClick={handleClick} disabled={pending}>
         {pending ? "Eliminando…" : "Eliminar gasto"}
       </Button>
       {error && <div className="mt-2 text-[13px] font-medium text-rose">{error}</div>}

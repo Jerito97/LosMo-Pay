@@ -21,6 +21,8 @@
   --rose: #a83243;
   --rose2: #c94e5e;
   --success: #2f7d52;
+  --onrose: #f7e9e4;
+  --onsuccess: #f3f9f5;
   --knob: #c3b0a4;
   --brand-ink: #4a0e1a;
 }
@@ -39,6 +41,7 @@
   --rose: #c94e5e;
   --rose2: #d9707c;
   --success: #7fd1a8;
+  --onsuccess: #16281d;
   --knob: #7d5c58;
   --brand-ink: #f4e9e4;
 }
@@ -61,6 +64,7 @@
     --rose: #c94e5e;
     --rose2: #d9707c;
     --success: #7fd1a8;
+    --onsuccess: #16281d;
     --knob: #7d5c58;
     --brand-ink: #f4e9e4;
   }
@@ -83,6 +87,8 @@
   --color-rose: var(--rose);
   --color-rose2: var(--rose2);
   --color-success: var(--success);
+  --color-onrose: var(--onrose);
+  --color-onsuccess: var(--onsuccess);
   --color-knob: var(--knob);
   --color-brand-ink: var(--brand-ink);
 

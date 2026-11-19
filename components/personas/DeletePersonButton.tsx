@@ -9,7 +9,7 @@ export function DeletePersonButton({ personId, personName }: { personId: string;
 
   return (
     <Button
-      variant="danger-outline"
+      variant="danger"
       onClick={() => openSheet(<DeletePersonSheet personId={personId} personName={personName} />)}
     >
       Eliminar persona

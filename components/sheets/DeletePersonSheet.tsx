@@ -43,7 +43,7 @@ export function DeletePersonSheet({ personId, personName }: { personId: string; 
 
       {error && <div className="text-[13px] font-medium text-rose">{error}</div>}
 
-      <Button variant="danger-outline" onClick={handleConfirm} disabled={pending}>
+      <Button variant="danger" onClick={handleConfirm} disabled={pending}>
         {pending ? "Eliminando…" : "Eliminar para siempre"}
       </Button>
       <Button variant="secondary" onClick={closeSheet} disabled={pending}>

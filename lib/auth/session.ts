@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { getIronSession, type SessionOptions } from "iron-session";
 import { eq } from "drizzle-orm";
@@ -47,7 +48,11 @@ export async function getSession() {
   return getIronSession<SessionData>(cookieStore, getSessionOptions());
 }
 
-export async function getCurrentUser() {
+// cache(): el layout raíz y la página de cada ruta llaman a esto por
+// separado para lo mismo (tema + sesión) en cada navegación. Sin esto, cada
+// click en una pestaña dispara dos round-trips idénticos a Neon en vez de
+// uno solo.
+export const getCurrentUser = cache(async () => {
   const session = await getSession();
   if (!session.userId) return null;
 
@@ -55,7 +60,7 @@ export async function getCurrentUser() {
     where: eq(users.id, session.userId),
   });
   return user ?? null;
-}
+});
 
 export async function requireCurrentUser() {
   const user = await getCurrentUser();
