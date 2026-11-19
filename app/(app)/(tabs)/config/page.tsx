@@ -7,7 +7,7 @@ import { LogoutButton } from "@/components/config/LogoutButton";
 export default async function ConfigPage() {
   const me = await requireCurrentUser();
   const prefs = me.notifPrefs;
-  const theme = me.themePref as "claro" | "oscuro";
+  const theme = me.themePref as "claro" | "oscuro" | "sistema";
 
   return (
     <div className="px-[18px] pt-14 pb-[100px]">

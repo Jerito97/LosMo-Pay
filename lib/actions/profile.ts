@@ -15,7 +15,7 @@ import {
   usernameSchema,
 } from "@/lib/auth/validation";
 
-export async function setTheme(theme: "claro" | "oscuro") {
+export async function setTheme(theme: "claro" | "oscuro" | "sistema") {
   const me = await requireCurrentUser();
   await db.update(users).set({ themePref: theme }).where(eq(users.id, me.id));
   revalidatePath("/", "layout");

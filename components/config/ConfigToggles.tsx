@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setTheme, toggleNotifPref } from "@/lib/actions/profile";
+import { Segmented } from "@/components/ui/Segmented";
 
 interface Prefs {
   cumple: boolean;
@@ -10,13 +11,15 @@ interface Prefs {
   resumen: boolean;
 }
 
+type Theme = "claro" | "oscuro" | "sistema";
+
 const ROWS: Array<{ key: keyof Prefs; label: string; sub: string }> = [
   { key: "cumple", label: "Cumpleaños", sub: "La mañana del día, a las 9." },
   { key: "gasto", label: "Nuevos gastos", sub: "Cuando te suman a un gasto." },
   { key: "resumen", label: "Resumen semanal", sub: "Los lunes, cómo quedó el balance." },
 ];
 
-export function ConfigToggles({ prefs, theme }: { prefs: Prefs; theme: "claro" | "oscuro" }) {
+export function ConfigToggles({ prefs, theme }: { prefs: Prefs; theme: Theme }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -27,8 +30,7 @@ export function ConfigToggles({ prefs, theme }: { prefs: Prefs; theme: "claro" |
     });
   }
 
-  function handleTheme() {
-    const next = theme === "oscuro" ? "claro" : "oscuro";
+  function handleTheme(next: Theme) {
     document.documentElement.dataset.theme = next;
     startTransition(async () => {
       await setTheme(next);
@@ -73,20 +75,26 @@ export function ConfigToggles({ prefs, theme }: { prefs: Prefs; theme: "claro" |
       <div className="mt-6 px-1 text-[10px] font-bold tracking-[0.18em] text-accent uppercase">
         Apariencia
       </div>
-      <button
-        type="button"
-        disabled={pending}
-        onClick={handleTheme}
-        className="mt-2.5 flex w-full items-center gap-3.5 rounded-2xl border border-line bg-card p-3.5 text-left shadow-[0_2px_8px_rgba(43,16,21,0.04)]"
-      >
-        <span className="min-w-0 flex-1">
-          <span className="block text-[14.5px] font-semibold">Modo oscuro</span>
-          <span className="mt-0.5 block text-[11.5px] text-muted">
-            {theme === "oscuro" ? "Papel oscuro, tinta clara" : "Papel crema, tinta bordó"}
-          </span>
+      <div className="mt-2.5 rounded-2xl border border-line bg-card p-3.5 shadow-[0_2px_8px_rgba(43,16,21,0.04)]">
+        <span className="block text-[14.5px] font-semibold">Modo</span>
+        <span className="mt-0.5 block text-[11.5px] text-muted">
+          {theme === "sistema"
+            ? "Sigue lo que tengas configurado en el teléfono"
+            : theme === "oscuro"
+              ? "Papel oscuro, tinta clara"
+              : "Papel crema, tinta bordó"}
         </span>
-        <Switch on={theme === "oscuro"} />
-      </button>
+        <Segmented
+          className="mt-3"
+          options={[
+            { value: "claro", label: "Claro" },
+            { value: "oscuro", label: "Oscuro" },
+            { value: "sistema", label: "Sistema" },
+          ]}
+          value={theme}
+          onChange={handleTheme}
+        />
+      </div>
     </>
   );
 }

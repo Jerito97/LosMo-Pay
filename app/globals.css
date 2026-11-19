@@ -41,6 +41,28 @@
   --brand-ink: #f4e9e4;
 }
 
+/* "Sistema": mismos valores que oscuro, pero solo si el teléfono/navegador
+   está en modo oscuro. Con "claro" u "oscuro" elegidos a mano, esto no
+   aplica nunca (el selector exige data-theme="sistema" exacto). */
+@media (prefers-color-scheme: dark) {
+  [data-theme="sistema"] {
+    --desk: #120709;
+    --paper: #170a0d;
+    --card: #241216;
+    --ink: #f4e9e4;
+    --muted: #bd9d96;
+    --faint: #c9aba5;
+    --line: #3b1d22;
+    --line2: #4e262d;
+    --wine: #5e1526;
+    --accent: #e2c8cd;
+    --rose: #c94e5e;
+    --rose2: #d9707c;
+    --knob: #7d5c58;
+    --brand-ink: #f4e9e4;
+  }
+}
+
 @theme {
   --color-desk: var(--desk);
   --color-paper: var(--paper);
