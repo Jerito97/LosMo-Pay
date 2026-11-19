@@ -26,7 +26,7 @@ export function GastosBalanceCard({ net, bars }: { net: number; bars: BalanceBar
             Tu saldo neto
           </span>
           <span className="text-[11.5px] text-onwine2">
-            {net > 0 ? "a favor tuyo" : net < 0 ? "en contra" : "sin deudas abiertas"}
+            {net > 0 ? "te deben" : net < 0 ? "debés" : "sin deudas abiertas"}
           </span>
         </span>
         <span className="mt-1.5 flex items-end justify-between gap-2.5">
