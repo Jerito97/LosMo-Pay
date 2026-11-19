@@ -6,6 +6,7 @@ import { ledgerBetween, myEffect, shareOf } from "@/lib/balances";
 import { isZeroMoney, money, relativeDateLabel, timeAgo } from "@/lib/format";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card, WineCard } from "@/components/ui/Card";
+import { AliasCopyCard } from "@/components/personas/AliasCopyCard";
 import { DeleteExpenseButton } from "@/components/gastos/DeleteExpenseButton";
 import { JoinLeaveExpenseButton } from "@/components/gastos/JoinLeaveExpenseButton";
 import { EditParticipantsButton } from "@/components/gastos/EditParticipantsButton";
@@ -91,9 +92,15 @@ export default async function GastoDetailPage({
         </div>
       </Card>
 
-      {effect < 0 && expense.payerId !== me.id && (
+      {effect < 0 && expense.payerId !== me.id && payer && (
         <div className="mt-3.5">
-          <PayMyShareButton payerId={expense.payerId} amount={Math.abs(effect)} />
+          <div className="px-1 text-[10px] font-bold tracking-[0.18em] text-accent uppercase">
+            Alias de {payer.username}
+          </div>
+          <AliasCopyCard alias={payer.alias} />
+          <div className="mt-2.5">
+            <PayMyShareButton payerId={expense.payerId} amount={Math.abs(effect)} />
+          </div>
         </div>
       )}
 
