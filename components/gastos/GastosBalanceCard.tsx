@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { WineCard } from "@/components/ui/Card";
+import { Avatar } from "@/components/ui/Avatar";
 import { money, signedMoney } from "@/lib/format";
 
 export interface BalanceBar {
@@ -12,7 +13,6 @@ export interface BalanceBar {
 
 export function GastosBalanceCard({ net, bars }: { net: number; bars: BalanceBar[] }) {
   const [open, setOpen] = useState(false);
-  const max = Math.max(1, ...bars.map((b) => Math.abs(b.amount)));
 
   return (
     <WineCard>
@@ -47,42 +47,26 @@ export function GastosBalanceCard({ net, bars }: { net: number; bars: BalanceBar
 
       {open && bars.length > 0 && (
         <div className="[animation:sIn_.22s_ease-out]">
-          <div className="mt-4.5 flex flex-col gap-2.5 border-t border-[rgba(247,233,228,0.28)] pt-4">
-            {bars.map((bar) => {
-              const pct = `${Math.round((Math.abs(bar.amount) / max) * 100)}%`;
-              return (
-                <div key={bar.userId} className="flex items-center gap-2.5">
-                  <span className="w-[46px] flex-none overflow-hidden text-[12px] font-semibold text-onwine text-ellipsis whitespace-nowrap">
-                    {bar.name}
-                  </span>
-                  <span className="grid h-3.5 flex-1 grid-cols-[1fr_1px_1fr] items-center">
-                    <span className="flex justify-end">
-                      <span
-                        className="h-2.5 rounded-l-[5px] bg-onwine2"
-                        style={{ width: bar.amount < 0 ? pct : "0%" }}
-                      />
-                    </span>
-                    <span className="h-3.5 bg-[rgba(247,233,228,0.34)]" />
-                    <span className="flex">
-                      <span
-                        className="h-2.5 rounded-r-[5px] bg-rose2"
-                        style={{ width: bar.amount > 0 ? pct : "0%" }}
-                      />
-                    </span>
+          <div className="mt-4.5 flex flex-col gap-3 border-t border-[rgba(247,233,228,0.28)] pt-4">
+            {bars.map((bar) => (
+              <div key={bar.userId} className="flex items-center gap-3">
+                <Avatar name={bar.name} userId={bar.userId} size={34} />
+                <span className="min-w-0 flex-1 truncate text-[14.5px] font-semibold text-onwine">
+                  {bar.name}
+                </span>
+                <span className="flex-none text-right">
+                  <span className="block text-[9.5px] font-bold tracking-[0.12em] text-onwine3 uppercase">
+                    {bar.amount > 0 ? "te debe" : "le debés"}
                   </span>
                   <span
-                    className="w-[70px] flex-none text-right text-[12.5px] font-semibold"
-                    style={{ color: bar.amount > 0 ? "var(--onwine)" : "var(--onwine2)" }}
+                    className="mt-0.5 block text-[14px] font-semibold"
+                    style={{ color: bar.amount > 0 ? "var(--onwine)" : "var(--rose2)" }}
                   >
                     {money(bar.amount)}
                   </span>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-3 flex justify-between text-[10px] font-bold tracking-[0.14em] text-onwine3 uppercase">
-            <span>Le debés</span>
-            <span>Te deben</span>
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       )}
