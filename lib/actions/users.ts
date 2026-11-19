@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db/client";
 import { expenseParticipants, expenses, notifications, payments, users } from "@/lib/db/schema";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { hashPassword } from "@/lib/auth/password";
+import { passwordSchema } from "@/lib/auth/validation";
 
 /**
  * Borrado total: solo un admin, y no a sí mismo. Se lleva puesto todo lo que
@@ -77,5 +79,29 @@ export async function setAdmin(userId: string, isAdmin: boolean) {
   await db.update(users).set({ isAdmin }).where(eq(users.id, userId));
 
   revalidatePath("/personas");
+  revalidatePath(`/personas/${userId}`);
+}
+
+/**
+ * Resetear la contraseña de otra persona. Reemplaza el flow de "olvidé mi
+ * contraseña" por mail para el grupo: el club es chico y de confianza, así
+ * que un admin le puede poner una contraseña nueva en persona (o por
+ * WhatsApp) en vez de depender de que el mail de recuperación le llegue.
+ */
+export async function adminResetPassword(userId: string, newPassword: string) {
+  const me = await requireCurrentUser();
+  if (!me.isAdmin) throw new Error("Solo un admin puede cambiar la contraseña de otra persona");
+
+  const parsed = passwordSchema.safeParse(newPassword);
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message ?? "Contraseña inválida");
+  }
+
+  const passwordHash = await hashPassword(parsed.data);
+  await db
+    .update(users)
+    .set({ passwordHash, resetTokenHash: null, resetTokenExpiresAt: null })
+    .where(eq(users.id, userId));
+
   revalidatePath(`/personas/${userId}`);
 }

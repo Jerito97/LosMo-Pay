@@ -11,6 +11,7 @@ import { DeletePaymentButton } from "@/components/personas/DeletePaymentButton";
 import { DeletePersonButton } from "@/components/personas/DeletePersonButton";
 import { EditProfileButton } from "@/components/personas/EditProfileButton";
 import { ToggleAdminButton } from "@/components/personas/ToggleAdminButton";
+import { ResetPasswordButton } from "@/components/personas/ResetPasswordButton";
 
 export default async function PersonaDetailPage({
   params,
@@ -109,6 +110,11 @@ export default async function PersonaDetailPage({
       {me.isAdmin && person.id !== me.id && (
         <div className="mt-4 flex flex-col gap-2.5">
           <ToggleAdminButton personId={person.id} isAdmin={person.isAdmin} />
+          <ResetPasswordButton
+            personId={person.id}
+            personName={person.username}
+            hasEmail={Boolean(person.email)}
+          />
           <DeletePersonButton personId={person.id} personName={person.username} />
         </div>
       )}
