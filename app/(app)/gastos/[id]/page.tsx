@@ -107,7 +107,7 @@ export default async function GastoDetailPage({
       <div className="mt-6 flex items-baseline justify-between gap-2.5 px-1">
         <span className="font-[family-name:var(--font-display)] text-[23px]">Participan</span>
         <span className="text-[10px] font-bold tracking-[0.14em] text-faint uppercase">
-          {expense.participantIds.length} personas
+          {expense.participantIds.length} persona{expense.participantIds.length === 1 ? "" : "s"}
         </span>
       </div>
       <div className="mt-2.5 flex flex-col gap-2.5">

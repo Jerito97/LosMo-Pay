@@ -46,7 +46,7 @@ export default async function GastosPage() {
   });
 
   return (
-    <div className="px-[18px] pt-14 pb-[100px]">
+    <div className="px-[18px] pt-14 pb-[172px]">
       <h1 className="mx-1 font-[family-name:var(--font-display)] text-[40px] leading-none font-normal">
         Gastos
       </h1>

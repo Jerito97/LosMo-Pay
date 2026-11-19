@@ -14,13 +14,14 @@ export interface BalanceBar {
 export function GastosBalanceCard({ net, bars }: { net: number; bars: BalanceBar[] }) {
   const [open, setOpen] = useState(false);
   const netLabel = net === 0 ? "Al día" : signedMoney(net);
+  const hasBars = bars.length > 0;
 
   return (
     <WineCard>
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="w-full cursor-pointer bg-transparent p-0 text-left text-inherit"
+        onClick={() => hasBars && setOpen((o) => !o)}
+        className={`w-full bg-transparent p-0 text-left text-inherit ${hasBars ? "cursor-pointer" : "cursor-default"}`}
       >
         <span className="flex items-baseline justify-between gap-2.5">
           <span className="text-[10px] font-bold tracking-[0.18em] text-onwine3 uppercase">
@@ -36,25 +37,27 @@ export function GastosBalanceCard({ net, bars }: { net: number; bars: BalanceBar
           >
             {netLabel}
           </span>
-          <span className="flex flex-none items-center gap-1.5 pb-1.5 text-[11px] font-bold tracking-wide whitespace-nowrap text-onwine3 uppercase">
-            {open ? "Ocultar" : "Quién debe"}
-            <span
-              className="text-[13px] transition-transform"
-              style={{ transform: open ? "rotate(180deg)" : "none" }}
-            >
-              ⌄
+          {hasBars && (
+            <span className="flex flex-none items-center gap-1.5 pb-1.5 text-[11px] font-bold tracking-wide whitespace-nowrap text-onwine3 uppercase">
+              {open ? "Ocultar" : "Quién debe"}
+              <span
+                className="text-[13px] transition-transform"
+                style={{ transform: open ? "rotate(180deg)" : "none" }}
+              >
+                ⌄
+              </span>
             </span>
-          </span>
+          )}
         </span>
       </button>
 
-      {open && bars.length > 0 && (
+      {open && hasBars && (
         <div className="[animation:sIn_.22s_ease-out]">
           <div className="mt-4.5 flex flex-col gap-3 border-t border-[rgba(247,233,228,0.28)] pt-4">
             {bars.map((bar) => (
-              <div key={bar.userId} className="flex items-center gap-3">
+              <div key={bar.userId} className="flex items-start gap-3">
                 <Avatar name={bar.name} userId={bar.userId} size={34} />
-                <span className="min-w-0 flex-1 truncate text-[14.5px] font-semibold text-onwine">
+                <span className="min-w-0 flex-1 text-[14.5px] font-semibold text-onwine">
                   {bar.name}
                 </span>
                 <span className="flex-none text-right">
