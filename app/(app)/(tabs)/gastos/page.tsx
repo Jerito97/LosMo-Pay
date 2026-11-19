@@ -1,7 +1,7 @@
 import { requireCurrentUser } from "@/lib/auth/session";
 import { getAllUsers, getExpensesWithParticipants, getPayments } from "@/lib/data/queries";
 import { computeBalances, myEffect, netTotal } from "@/lib/balances";
-import { relativeDateLabel } from "@/lib/format";
+import { isZeroMoney, relativeDateLabel } from "@/lib/format";
 import { sortByRecentExpenseActivity } from "@/lib/recency";
 import { GastosBalanceCard } from "@/components/gastos/GastosBalanceCard";
 import { GastosExpenseList } from "@/components/gastos/GastosExpenseList";
@@ -25,6 +25,7 @@ export default async function GastosPage() {
       name: usersById.get(userId)?.username ?? "?",
       amount,
     }))
+    .filter((bar) => !isZeroMoney(bar.amount))
     .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount))
     .slice(0, 5);
 

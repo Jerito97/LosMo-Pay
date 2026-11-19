@@ -9,6 +9,14 @@ export function signedMoney(amount: number): string {
   return prefix + money(amount);
 }
 
+// Un saldo de, por ejemplo, $0.33 (resto de un reparto entre 3) se muestra
+// como "$0" por el redondeo de money(). Para decidir si alguien "ya está al
+// día" hay que usar este mismo criterio, si no la persona queda en el medio:
+// se ve "$0" en pantalla pero igual aparece en los listados de deudas.
+export function isZeroMoney(amount: number): boolean {
+  return Math.round(Math.abs(amount)) === 0;
+}
+
 export function initials(name: string): string {
   return name
     .trim()

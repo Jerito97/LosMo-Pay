@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { getAllUsers, getExpensesWithParticipants } from "@/lib/data/queries";
-import { myEffect, shareOf } from "@/lib/balances";
-import { money, relativeDateLabel, timeAgo } from "@/lib/format";
+import { getAllUsers, getExpensesWithParticipants, getPayments } from "@/lib/data/queries";
+import { ledgerBetween, myEffect, shareOf } from "@/lib/balances";
+import { isZeroMoney, money, relativeDateLabel, timeAgo } from "@/lib/format";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card, WineCard } from "@/components/ui/Card";
 import { DeleteExpenseButton } from "@/components/gastos/DeleteExpenseButton";
@@ -12,6 +12,7 @@ import { EditParticipantsButton } from "@/components/gastos/EditParticipantsButt
 import { EditExpenseButton } from "@/components/gastos/EditExpenseButton";
 import { ShareExpenseButton } from "@/components/gastos/ShareExpenseButton";
 import { PayMyShareButton } from "@/components/gastos/PayMyShareButton";
+import { CollectShareButton } from "@/components/gastos/CollectShareButton";
 import { InviteJoinPrompt } from "@/components/gastos/InviteJoinPrompt";
 
 export default async function GastoDetailPage({
@@ -24,7 +25,11 @@ export default async function GastoDetailPage({
   const { id } = await params;
   const { invite } = await searchParams;
   const me = await requireCurrentUser();
-  const [users, expenses] = await Promise.all([getAllUsers(), getExpensesWithParticipants()]);
+  const [users, expenses, payments] = await Promise.all([
+    getAllUsers(),
+    getExpensesWithParticipants(),
+    getPayments(),
+  ]);
 
   const expense = expenses.find((e) => e.id === id);
   if (!expense) notFound();
@@ -35,6 +40,7 @@ export default async function GastoDetailPage({
   const effect = myEffect(expense, me.id);
   const iParticipate = expense.participantIds.includes(me.id);
   const canManage = me.isAdmin || expense.createdBy === me.id;
+  const iAmPayer = expense.payerId === me.id;
   const editor = expense.updatedBy ? usersById.get(expense.updatedBy) : null;
 
   return (
@@ -101,6 +107,10 @@ export default async function GastoDetailPage({
         {expense.participantIds.map((participantId) => {
           const user = usersById.get(participantId);
           const isPayer = participantId === expense.payerId;
+          const owesMe =
+            iAmPayer &&
+            !isPayer &&
+            !isZeroMoney(ledgerBetween(me.id, participantId, expenses, payments).amount);
           return (
             <div
               key={participantId}
@@ -121,6 +131,7 @@ export default async function GastoDetailPage({
               >
                 {money(isPayer ? expense.amount : share)}
               </span>
+              {owesMe && <CollectShareButton participantId={participantId} amount={share} />}
             </div>
           );
         })}
