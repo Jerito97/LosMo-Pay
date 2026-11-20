@@ -4,30 +4,42 @@ import Link from "next/link";
 import { useState } from "react";
 import { Segmented } from "@/components/ui/Segmented";
 import { Avatar } from "@/components/ui/Avatar";
-import { money } from "@/lib/format";
+import { isZeroMoney, money } from "@/lib/format";
 
 export interface PersonaRow {
   id: string;
   name: string;
   isMe: boolean;
   meta: string;
-  net: number; // saldo neto global de esa persona en todo el grupo
+  net: number; // saldo entre VOS y esta persona puntual (no el global del grupo)
 }
 
-type Sort = "alfabetico" | "deben" | "les-deben";
+type View = "todos" | "te-deben" | "debes";
 
 export function PersonasClient({ people }: { people: PersonaRow[] }) {
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<Sort>("alfabetico");
+  const [view, setView] = useState<View>("todos");
 
   const q = search.trim().toLowerCase();
-  const filtered = people.filter((p) => p.name.toLowerCase().includes(q));
+  const matching = people.filter((p) => p.name.toLowerCase().includes(q));
 
-  const sorted = [...filtered].sort((a, b) => {
-    if (sort === "alfabetico") return a.name.localeCompare(b.name, "es");
-    if (sort === "deben") return a.net - b.net; // más negativo (deben más) primero
-    return b.net - a.net; // les deben más primero
-  });
+  let shown: typeof matching;
+  if (view === "te-deben") {
+    shown = matching.filter((p) => !isZeroMoney(p.net) && p.net > 0).sort((a, b) => b.net - a.net);
+  } else if (view === "debes") {
+    shown = matching.filter((p) => !isZeroMoney(p.net) && p.net < 0).sort((a, b) => a.net - b.net);
+  } else {
+    shown = [...matching].sort((a, b) => a.name.localeCompare(b.name, "es"));
+  }
+
+  const emptyMessage =
+    q.length > 0
+      ? "Nadie con ese nombre."
+      : view === "te-deben"
+        ? "Nadie te debe nada ahora."
+        : view === "debes"
+          ? "No le debés nada a nadie."
+          : "No hay nadie en el grupo.";
 
   return (
     <div>
@@ -47,17 +59,17 @@ export function PersonasClient({ people }: { people: PersonaRow[] }) {
       <Segmented
         className="mt-3"
         options={[
-          { value: "alfabetico", label: "Alfabético" },
-          { value: "deben", label: "Deben más" },
-          { value: "les-deben", label: "Les deben más" },
+          { value: "todos", label: "Todos" },
+          { value: "te-deben", label: "Te deben" },
+          { value: "debes", label: "Debés" },
         ]}
-        value={sort}
-        onChange={setSort}
+        value={view}
+        onChange={setView}
       />
 
       <div className="mt-4 flex flex-col gap-2.5">
-        {sorted.map((p) => {
-          const state = p.net > 0 ? "le deben" : p.net < 0 ? "debe" : "al día";
+        {shown.map((p) => {
+          const state = p.net > 0 ? "te debe" : p.net < 0 ? "debés" : "al día";
           const color = p.net > 0 ? "var(--brand-ink)" : p.net < 0 ? "var(--rose)" : "var(--faint)";
           return (
             <Link
@@ -82,16 +94,14 @@ export function PersonasClient({ people }: { people: PersonaRow[] }) {
                   {state}
                 </span>
                 <span className="mt-0.5 block text-[15px] font-semibold" style={{ color }}>
-                  {p.net === 0 ? "—" : money(p.net)}
+                  {isZeroMoney(p.net) ? "—" : money(p.net)}
                 </span>
               </span>
               <span className="flex-none text-[15px] text-faint">›</span>
             </Link>
           );
         })}
-        {sorted.length === 0 && (
-          <div className="px-1 py-6 text-[13px] text-muted">Nadie con ese nombre.</div>
-        )}
+        {shown.length === 0 && <div className="px-1 py-6 text-[13px] text-muted">{emptyMessage}</div>}
       </div>
     </div>
   );

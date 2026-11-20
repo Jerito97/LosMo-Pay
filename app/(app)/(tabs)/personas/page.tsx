@@ -1,6 +1,6 @@
 import { requireCurrentUser } from "@/lib/auth/session";
 import { getAllUsers, getExpensesWithParticipants, getPayments } from "@/lib/data/queries";
-import { computeBalances, netTotal } from "@/lib/balances";
+import { ledgerBetween } from "@/lib/balances";
 import { formatBirthdayFull } from "@/lib/format";
 import { PersonasClient } from "@/components/personas/PersonasClient";
 
@@ -17,9 +17,10 @@ export default async function PersonasPage() {
     name: u.username,
     isMe: u.id === me.id,
     meta: `cumple el ${formatBirthdayFull(u.birthday)}`,
-    // Saldo neto de esta persona contra TODO el grupo (no relativo a quien mira
-    // la pantalla): lo mismo que cada uno ve como "Tu saldo neto" en Gastos.
-    net: netTotal(computeBalances(u.id, expenses, payments)),
+    // Saldo entre vos y esta persona puntual (no el saldo global de esa
+    // persona contra todo el grupo): es lo que hace falta para poder separar
+    // "quién me debe a mí" de "a quién le debo yo".
+    net: ledgerBetween(me.id, u.id, expenses, payments).amount,
   }));
 
   return (
