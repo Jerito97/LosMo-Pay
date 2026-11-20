@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Avatar } from "@/components/ui/Avatar";
+import { Segmented } from "@/components/ui/Segmented";
 import { money, signedMoney } from "@/lib/format";
+
+type Filter = "todos" | "pendientes";
 
 export interface ExpenseRow {
   id: string;
@@ -18,11 +21,12 @@ export interface ExpenseRow {
 
 export function GastosExpenseList({ rows }: { rows: ExpenseRow[] }) {
   const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<Filter>("todos");
 
   const q = search.trim().toLowerCase();
-  const matches = q
-    ? rows.filter((r) => r.description.toLowerCase().includes(q) || r.sub.toLowerCase().includes(q))
-    : rows;
+  const matches = rows
+    .filter((r) => filter === "todos" || r.effect !== 0)
+    .filter((r) => !q || r.description.toLowerCase().includes(q) || r.sub.toLowerCase().includes(q));
 
   const dateOrder: string[] = [];
   for (const r of matches) if (!dateOrder.includes(r.dateLabel)) dateOrder.push(r.dateLabel);
@@ -51,6 +55,16 @@ export function GastosExpenseList({ rows }: { rows: ExpenseRow[] }) {
           className="min-w-0 flex-1 bg-transparent py-3.5 text-[14.5px] font-medium text-ink outline-none"
         />
       </div>
+
+      <Segmented
+        className="mt-3"
+        options={[
+          { value: "todos", label: "Todos" },
+          { value: "pendientes", label: "Pendientes" },
+        ]}
+        value={filter}
+        onChange={setFilter}
+      />
 
       {groups.map((group) => (
         <div key={group.label}>
@@ -92,7 +106,11 @@ export function GastosExpenseList({ rows }: { rows: ExpenseRow[] }) {
       ))}
 
       {matches.length === 0 && (
-        <div className="px-1 py-6.5 text-[13px] text-muted">Sin gastos que coincidan con esa búsqueda.</div>
+        <div className="px-1 py-6.5 text-[13px] text-muted">
+          {q
+            ? "Sin gastos que coincidan con esa búsqueda."
+            : "No tenés gastos pendientes: estás al día con todos."}
+        </div>
       )}
     </div>
   );
