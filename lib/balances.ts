@@ -16,8 +16,13 @@ export interface PaymentForBalance {
   amount: number;
 }
 
+// Redondeada siempre para arriba: la plata real no se puede partir en
+// centavos, así que si el reparto exacto da con coma (ej. $10.000 entre 3 =
+// $3.333,33), cada parte queda en $3.334. La diferencia la termina ganando
+// quien puso la plata (cobra de más en vez de quedar un peso corto), nunca al
+// revés.
 export function shareOf(expense: ExpenseForBalance): number {
-  return expense.amount / expense.participantIds.length;
+  return Math.ceil(expense.amount / expense.participantIds.length);
 }
 
 export function myShareOf(expense: ExpenseForBalance, meId: string): number {

@@ -38,7 +38,7 @@ export function CargarGastoForm({
   const splitHint = useMemo(() => {
     if (selected.length === 0) return "Elegí al menos una persona";
     return amountNumber
-      ? `${money(amountNumber / selected.length)} cada uno`
+      ? `${money(Math.ceil(amountNumber / selected.length))} cada uno`
       : `Se divide entre ${selected.length} persona${selected.length === 1 ? "" : "s"}`;
   }, [selected, amountNumber]);
 
