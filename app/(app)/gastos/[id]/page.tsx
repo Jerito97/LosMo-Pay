@@ -114,10 +114,8 @@ export default async function GastoDetailPage({
         {expense.participantIds.map((participantId) => {
           const user = usersById.get(participantId);
           const isPayer = participantId === expense.payerId;
-          const owesMe =
-            iAmPayer &&
-            !isPayer &&
-            !isZeroMoney(ledgerBetween(me.id, participantId, expenses, payments).amount);
+          const ledgerAmount = ledgerBetween(me.id, participantId, expenses, payments).amount;
+          const owesMe = iAmPayer && !isPayer && !isZeroMoney(ledgerAmount) && ledgerAmount > 0;
           return (
             <div
               key={participantId}
