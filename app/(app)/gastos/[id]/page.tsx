@@ -90,7 +90,13 @@ export default async function GastoDetailPage({
 
       <Card className="mt-3.5">
         <div className="text-[10px] font-bold tracking-[0.18em] text-accent uppercase">
-          {netEffect > 0 ? "Te deben por este gasto" : netEffect < 0 ? "Debés por este gasto" : "No te afecta"}
+          {netEffect > 0
+            ? "Te deben por este gasto"
+            : netEffect < 0
+              ? "Debés por este gasto"
+              : iParticipate
+                ? "Ya estás al día"
+                : "No te afecta"}
         </div>
         <div
           className="mt-1.5 font-[family-name:var(--font-display)] text-[30px] leading-none"
