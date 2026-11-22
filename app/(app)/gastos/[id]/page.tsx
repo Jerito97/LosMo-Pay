@@ -116,27 +116,40 @@ export default async function GastoDetailPage({
           const isPayer = participantId === expense.payerId;
           const ledgerAmount = ledgerBetween(me.id, participantId, expenses, payments).amount;
           const owesMe = iAmPayer && !isPayer && !isZeroMoney(ledgerAmount) && ledgerAmount > 0;
+          // El reparto de este gasto dice que esta persona te debe su parte,
+          // pero en el total de todo lo que tienen entre los dos el saldo
+          // quedó a favor de ella (le debés vos, por otro gasto o pago): no
+          // hace falta cobrarle nada por este gasto puntual, ya está cubierto.
+          const coveredByCrossDebt =
+            iAmPayer && !isPayer && !isZeroMoney(share) && !isZeroMoney(ledgerAmount) && ledgerAmount < 0;
           return (
             <div
               key={participantId}
-              className="flex items-center gap-3 rounded-2xl border border-line bg-card p-3.5 shadow-[0_2px_8px_rgba(43,16,21,0.04)]"
+              className="flex flex-col gap-1.5 rounded-2xl border border-line bg-card p-3.5 shadow-[0_2px_8px_rgba(43,16,21,0.04)]"
             >
-              <Avatar name={user?.username ?? "?"} userId={participantId} size={36} />
-              <span className="min-w-0 flex-1">
-                <span className="block text-[15.5px] font-semibold">
-                  {participantId === me.id ? `${user?.username} (vos)` : user?.username}
+              <div className="flex items-center gap-3">
+                <Avatar name={user?.username ?? "?"} userId={participantId} size={36} />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[15.5px] font-semibold">
+                    {participantId === me.id ? `${user?.username} (vos)` : user?.username}
+                  </span>
+                  <span className="mt-0.5 block text-[11.5px] text-muted">
+                    {isPayer ? "puso el total" : "le corresponde"}
+                  </span>
                 </span>
-                <span className="mt-0.5 block text-[11.5px] text-muted">
-                  {isPayer ? "puso el total" : "le corresponde"}
+                <span
+                  className="flex-none text-[15px] font-semibold"
+                  style={{ color: isPayer ? "var(--brand-ink)" : "var(--ink)" }}
+                >
+                  {money(isPayer ? expense.amount : share)}
                 </span>
-              </span>
-              <span
-                className="flex-none text-[15px] font-semibold"
-                style={{ color: isPayer ? "var(--brand-ink)" : "var(--ink)" }}
-              >
-                {money(isPayer ? expense.amount : share)}
-              </span>
-              {owesMe && <CollectShareButton participantId={participantId} amount={share} />}
+                {owesMe && <CollectShareButton participantId={participantId} amount={share} />}
+              </div>
+              {coveredByCrossDebt && (
+                <div className="pl-[48px] text-[11px] text-muted">
+                  Ya cubierto: en total le debés vos a {user?.username ?? "esa persona"}.
+                </div>
+              )}
             </div>
           );
         })}
