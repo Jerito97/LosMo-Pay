@@ -3,6 +3,8 @@
 // cualquier usuario logueado. El reparto es siempre en partes iguales
 // entre los participantes de cada gasto.
 
+import { isZeroMoney } from "./format";
+
 export interface ExpenseForBalance {
   id: string;
   amount: number;
@@ -173,4 +175,33 @@ export function ledgerBetween(
   rows.sort((a, b) => (a.date < b.date ? 1 : -1));
   const amount = rows.reduce((sum, row) => sum + row.amount, 0);
   return { amount, rows };
+}
+
+/**
+ * Para un gasto puntual, ¿sigue habiendo algo pendiente de resolver para
+ * `meId`? El reparto (myEffect) nunca cambia una vez creado el gasto, así
+ * que no alcanza para saber si ya se cobró/pagó -eso solo lo refleja el
+ * saldo agregado entre las personas involucradas (ver ledgerBetween). Si
+ * pagaste vos, el gasto deja de estar pendiente apenas nadie te deba más en
+ * el total; si participaste, deja de estarlo apenas no le debas más en el
+ * total a quien pagó.
+ */
+export function isExpensePending(
+  meId: string,
+  expense: ExpenseForLedger,
+  expenses: ExpenseForLedger[],
+  payments: PaymentForLedger[],
+): boolean {
+  if (expense.payerId === meId) {
+    return expense.participantIds.some((participantId) => {
+      if (participantId === meId) return false;
+      const { amount } = ledgerBetween(meId, participantId, expenses, payments);
+      return amount > 0 && !isZeroMoney(amount);
+    });
+  }
+  if (expense.participantIds.includes(meId)) {
+    const { amount } = ledgerBetween(meId, expense.payerId, expenses, payments);
+    return amount < 0 && !isZeroMoney(amount);
+  }
+  return false;
 }

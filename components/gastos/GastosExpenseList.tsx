@@ -17,6 +17,7 @@ export interface ExpenseRow {
   sub: string;
   dateLabel: string;
   effect: number; // 0 si no participo
+  isPending: boolean; // si considerando el saldo agregado, todavía queda algo por cobrar/pagar
 }
 
 export function GastosExpenseList({ rows }: { rows: ExpenseRow[] }) {
@@ -25,7 +26,7 @@ export function GastosExpenseList({ rows }: { rows: ExpenseRow[] }) {
 
   const q = search.trim().toLowerCase();
   const matches = rows
-    .filter((r) => filter === "todos" || r.effect !== 0)
+    .filter((r) => filter === "todos" || r.isPending)
     .filter((r) => !q || r.description.toLowerCase().includes(q) || r.sub.toLowerCase().includes(q));
 
   const dateOrder: string[] = [];

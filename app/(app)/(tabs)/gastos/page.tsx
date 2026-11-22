@@ -1,6 +1,6 @@
 import { requireCurrentUser } from "@/lib/auth/session";
 import { getAllUsers, getExpensesWithParticipants, getPayments } from "@/lib/data/queries";
-import { computeBalances, myEffect, netTotal } from "@/lib/balances";
+import { computeBalances, isExpensePending, myEffect, netTotal } from "@/lib/balances";
 import { isZeroMoney, relativeDateLabel } from "@/lib/format";
 import { sortByRecentExpenseActivity } from "@/lib/recency";
 import { GastosBalanceCard } from "@/components/gastos/GastosBalanceCard";
@@ -42,6 +42,7 @@ export default async function GastosPage() {
         ` · entre ${expense.participantIds.length}`,
       dateLabel: relativeDateLabel(expense.expenseDate),
       effect: myEffect(expense, me.id),
+      isPending: isExpensePending(me.id, expense, expenses, payments),
     };
   });
 
