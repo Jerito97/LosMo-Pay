@@ -39,6 +39,11 @@ export default async function GastoDetailPage({
   const payer = usersById.get(expense.payerId);
   const share = shareOf(expense);
   const effect = myEffect(expense, me.id);
+  // Lo que debés por ESTE gasto puntual nunca cambia, pero si con el mismo
+  // pagador tenés otros gastos o pagos de por medio, lo que en total le
+  // debés (o te debe) puede ser otro número -y es el que importa de verdad
+  // a la hora de pagarle-.
+  const aggregateWithPayer = ledgerBetween(me.id, expense.payerId, expenses, payments).amount;
   const iParticipate = expense.participantIds.includes(me.id);
   const canManage = me.isAdmin || expense.createdBy === me.id;
   const iAmPayer = expense.payerId === me.id;
@@ -94,6 +99,17 @@ export default async function GastoDetailPage({
 
       {effect < 0 && expense.payerId !== me.id && payer && (
         <div className="mt-3.5">
+          {Math.round(aggregateWithPayer) !== Math.round(effect) && (
+            <div className="mb-2.5 px-1 text-[11.5px] text-muted">
+              Contando todo lo que tenés con {payer.username}, en total{" "}
+              {aggregateWithPayer > 0
+                ? `te debe ${money(aggregateWithPayer)}`
+                : aggregateWithPayer < 0
+                  ? `le debés ${money(aggregateWithPayer)}`
+                  : "están al día"}
+              .
+            </div>
+          )}
           <div className="px-1 text-[10px] font-bold tracking-[0.18em] text-accent uppercase">
             Alias de {payer.username}
           </div>
