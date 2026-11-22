@@ -39,14 +39,17 @@ export default async function GastoDetailPage({
   const payer = usersById.get(expense.payerId);
   const share = shareOf(expense);
   const effect = myEffect(expense, me.id);
-  // Lo que debés por ESTE gasto puntual nunca cambia, pero si con el mismo
-  // pagador tenés otros gastos o pagos de por medio, lo que en total le
-  // debés (o te debe) puede ser otro número -y es el que importa de verdad
-  // a la hora de pagarle-.
-  const aggregateWithPayer = ledgerBetween(me.id, expense.payerId, expenses, payments).amount;
   const iParticipate = expense.participantIds.includes(me.id);
   const canManage = me.isAdmin || expense.createdBy === me.id;
   const iAmPayer = expense.payerId === me.id;
+  // El reparto de ESTE gasto puntual (effect) nunca cambia, pero si con el
+  // mismo pagador tenés otros gastos o pagos de por medio, lo que en total
+  // le debés (o te debe) puede ser otro número -y es el que importa de
+  // verdad a la hora de pagarle-. Cuando sos vos quien pagó, esto no se
+  // puede reducir a un solo número (hay un pagador pero varios acreedores),
+  // así que ahí se deja el reparto crudo.
+  const netEffect =
+    iParticipate && !iAmPayer ? ledgerBetween(me.id, expense.payerId, expenses, payments).amount : effect;
   const editor = expense.updatedBy ? usersById.get(expense.updatedBy) : null;
 
   return (
@@ -87,35 +90,30 @@ export default async function GastoDetailPage({
 
       <Card className="mt-3.5">
         <div className="text-[10px] font-bold tracking-[0.18em] text-accent uppercase">
-          {effect > 0 ? "Te deben por este gasto" : effect < 0 ? "Debés por este gasto" : "No te afecta"}
+          {netEffect > 0 ? "Te deben por este gasto" : netEffect < 0 ? "Debés por este gasto" : "No te afecta"}
         </div>
         <div
           className="mt-1.5 font-[family-name:var(--font-display)] text-[30px] leading-none"
-          style={{ color: effect < 0 ? "var(--rose)" : "var(--ink)" }}
+          style={{ color: netEffect < 0 ? "var(--rose)" : "var(--ink)" }}
         >
-          {effect === 0 ? "—" : money(effect)}
+          {netEffect === 0 ? "—" : money(netEffect)}
         </div>
+        {!iAmPayer && iParticipate && Math.round(netEffect) !== Math.round(effect) && (
+          <div className="mt-1.5 text-[11px] text-muted">
+            Tu parte de este gasto es {money(effect)}; el número de arriba ya cuenta todo lo demás que
+            tenés con {payer?.username ?? "esa persona"}.
+          </div>
+        )}
       </Card>
 
-      {effect < 0 && expense.payerId !== me.id && payer && (
+      {netEffect < 0 && !iAmPayer && payer && (
         <div className="mt-3.5">
-          {Math.round(aggregateWithPayer) !== Math.round(effect) && (
-            <div className="mb-2.5 px-1 text-[11.5px] text-muted">
-              Contando todo lo que tenés con {payer.username}, en total{" "}
-              {aggregateWithPayer > 0
-                ? `te debe ${money(aggregateWithPayer)}`
-                : aggregateWithPayer < 0
-                  ? `le debés ${money(aggregateWithPayer)}`
-                  : "están al día"}
-              .
-            </div>
-          )}
           <div className="px-1 text-[10px] font-bold tracking-[0.18em] text-accent uppercase">
             Alias de {payer.username}
           </div>
           <AliasCopyCard alias={payer.alias} />
           <div className="mt-2.5">
-            <PayMyShareButton payerId={expense.payerId} amount={Math.abs(effect)} />
+            <PayMyShareButton payerId={expense.payerId} amount={Math.abs(netEffect)} />
           </div>
         </div>
       )}
